@@ -119,11 +119,25 @@ If this saves you a crawl morning:
 - 🐦 [X @gtarafdarr](https://x.com/gtarafdarr)
 - ✉️ [gobinda.ext1@gmail.com](mailto:gobinda.ext1@gmail.com)
 
-## About the maker
+## About me
 
-**Gobinda Tarafdar** — WordPress product marketer · stubborn problem-solver · lifelong Harry Potter devotee.
+<p align="center">
+  <img src="docs/assets/gobinda.jpg" width="160" height="160" alt="Gobinda Tarafdar" />
+</p>
 
-Product Marketing Specialist at [WPBakery](https://wpbakery.com/). More local tools: [Slack Agent Bridge](https://gtarafdar.github.io/slack-agent-bridge/), and other repos on [github.com/Gtarafdar](https://github.com/Gtarafdar/).
+### Gobinda Tarafdar
+
+WordPress product marketer · stubborn problem-solver · lifelong Harry Potter devotee
+
+By day I am the Product Marketing Specialist at [WPBakery](https://wpbakery.com/), the page builder that quietly powers a sizeable corner of the WordPress universe. Before that, I helped a single plugin cross 400,000+ active users through positioning, user research, and a relentless focus on what actually moves the needle.
+
+When the day-job owl flies home, I tinker on my own little workshop of spells. Broken Link Checker is one of them: a local toolbox so you can catch dead links without handing your crawl to the cloud.
+
+- GitHub: [Gtarafdar](https://github.com/Gtarafdar/)
+- Site: [gtarafdar.com](https://gtarafdar.com)
+- X: [@gtarafdarr](https://x.com/gtarafdarr)
+- Email: [gobinda.ext1@gmail.com](mailto:gobinda.ext1@gmail.com)
+- More tools: [Slack Agent Bridge](https://gtarafdar.github.io/slack-agent-bridge/)
 
 ## Project structure
 
