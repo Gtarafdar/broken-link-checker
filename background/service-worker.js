@@ -3,7 +3,7 @@ import { LinkChecker, isBroken, extractLinksFromHtml } from '../lib/checker.js';
 import { crawlDomain } from '../lib/crawler.js';
 import {
   createScan, updateScan, addPage, addLinks, updateLink,
-  getScanWithDetails, BatchedWriter
+  getScanWithDetails, BatchedWriter, getScannedPageUrlsForDomain
 } from '../lib/storage.js';
 import { uuid, getDomain, DEFAULT_SETTINGS, normalizeUrl } from '../lib/utils.js';
 import { shouldSkipLinkHref, isHttpCheckableUrl } from '../lib/link-skip.js';
@@ -24,6 +24,9 @@ async function getSettings() {
 }
 
 function broadcast(msg) {
+  if (msg?.type === MSG.SCAN_PROGRESS || msg?.type === MSG.SCAN_ERROR) {
+    if (!msg.mode && activeScan?.mode) msg.mode = activeScan.mode;
+  }
   chrome.runtime.sendMessage(msg).catch(() => {});
 }
 
@@ -61,14 +64,41 @@ async function processPage(scanId, pageData, settings, tabId) {
   });
 
   const results = await checker.checkMany(checkableLinks, (progress) => {
+    if (activeScan?.mode === 'page') {
+      broadcast({
+        type: MSG.SCAN_PROGRESS,
+        scanId,
+        progress: {
+          phase: 'checking',
+          checked: progress.completed,
+          total: progress.total,
+          currentUrl: progress.url,
+          pagesScanned: 1,
+          totalPages: 1
+        }
+      });
+      return;
+    }
+
+    // Domain / category: keep global totals so the bar doesn't jump per page
+    const base = activeScan?.linksCheckedBase || 0;
     broadcast({
       type: MSG.SCAN_PROGRESS,
       scanId,
       progress: {
-        checked: progress.completed,
-        total: progress.total,
+        phase: 'checking',
+        crawling: false,
+        checked: Math.min(
+          activeScan?.uniqueTotal || Infinity,
+          base + progress.completed
+        ),
+        total: activeScan?.uniqueTotal || progress.total,
+        uniqueTotal: activeScan?.uniqueTotal,
         currentUrl: progress.url,
-        pagesScanned: activeScan?.pagesScanned || 1
+        pagesScanned: activeScan?.pagesProcessed || 0,
+        totalPages: activeScan?.totalPages || 0,
+        maxPages: activeScan?.maxPages,
+        broken: activeScan?.brokenSoFar || 0
       }
     });
   }, abortController?.signal);
@@ -135,7 +165,12 @@ async function runPageScan(tab, mode, categoryOptions, existingScanId) {
     completedAt: null,
     status: 'running',
     stats: { pages: 0, links: 0, broken: 0 },
-    settings
+    settings,
+    batch: {
+      maxPages: settings.maxPages,
+      skipScannedPages: settings.skipScannedPages !== false,
+      batchPick: settings.batchPick === 'random' ? 'random' : 'bfs'
+    }
   };
   await createScan(scan);
   broadcast({ type: MSG.SCAN_PROGRESS, scanId, progress: { checked: 0, total: 0, pagesScanned: 0, starting: true } });
@@ -165,45 +200,255 @@ async function runPageScan(tab, mode, categoryOptions, existingScanId) {
       await updateScan(scan);
       broadcast({ type: MSG.SCAN_COMPLETE, scanId, scan });
     } else {
+      const maxPages = settings.maxPages || 50;
+      const skipScanned = settings.skipScannedPages !== false;
+      const batchPick = settings.batchPick === 'random' ? 'random' : 'bfs';
       const crawledPages = [];
+      const domain = getDomain(startUrl);
+
+      let prior = { urls: new Set(), scanCount: 0, pageCount: 0 };
+      if (skipScanned) {
+        try {
+          prior = await getScannedPageUrlsForDomain(domain);
+        } catch { /* history optional */ }
+      }
+
+      broadcast({
+        type: MSG.SCAN_PROGRESS,
+        scanId,
+        progress: {
+          phase: 'crawling',
+          crawling: true,
+          pagesScanned: 0,
+          maxPages,
+          totalPages: maxPages,
+          checked: 0,
+          total: 0,
+          batchSkip: skipScanned ? prior.pageCount : 0,
+          batchPick
+        }
+      });
+
+      // Seed from the live tab DOM (always useful for discovery links)
+      let seedPageLinks = [];
+      let seedNorm = normalizeUrl(startUrl);
+      try {
+        const extracted = await extractFromTab(tab.id, settings);
+        if (extracted?.links && extracted.pageUrl) {
+          seedNorm = normalizeUrl(extracted.pageUrl) || seedNorm;
+          seedPageLinks = (extracted.links || [])
+            .filter((l) => l.checkType !== 'hash')
+            .map((l) => l.href)
+            .filter((href) => {
+              try {
+                return new URL(href).origin === new URL(startUrl).origin;
+              } catch {
+                return false;
+              }
+            });
+
+          const alreadyScannedSeed = skipScanned && seedNorm && prior.urls.has(seedNorm);
+          if (!alreadyScannedSeed) {
+            crawledPages.push({
+              url: extracted.pageUrl,
+              title: extracted.pageTitle || extracted.pageUrl,
+              order: 0,
+              links: extracted.links,
+              pageLinks: seedPageLinks
+            });
+            activeScan.pagesScanned = 1;
+            broadcast({
+              type: MSG.SCAN_PROGRESS,
+              scanId,
+              progress: {
+                phase: 'crawling',
+                crawling: true,
+                pagesScanned: 1,
+                maxPages,
+                totalPages: maxPages,
+                checked: 0,
+                total: 0,
+                batchSkip: skipScanned ? prior.pageCount : 0,
+                batchPick
+              }
+            });
+          }
+        }
+      } catch { /* tab extract optional */ }
+
+      const excludeUrls = new Set(prior.urls);
+      if (seedNorm) excludeUrls.add(seedNorm);
+      for (const p of crawledPages) {
+        const n = normalizeUrl(p.url);
+        if (n) excludeUrls.add(n);
+      }
+
       await crawlDomain({
         startUrl,
-        maxPages: settings.maxPages,
+        maxPages,
         settings,
         mode: mode === 'category' ? 'category' : 'domain',
         categoryOptions: { origin: new URL(startUrl).origin, ...categoryOptions },
-        signal: abortController.signal
+        signal: abortController.signal,
+        crawlConcurrency: settings.crawlConcurrency || 3,
+        excludeUrls,
+        seededInBatch: crawledPages.length,
+        seedQueue: seedPageLinks,
+        batchPick
       }, {
-        onPage: (page) => {
+        onPage: (page, count, cap) => {
           crawledPages.push(page);
-          activeScan.pagesScanned = crawledPages.length;
+          activeScan.pagesScanned = count;
           broadcast({
             type: MSG.SCAN_PROGRESS,
             scanId,
-            progress: { checked: 0, total: 0, pagesScanned: crawledPages.length, crawling: true }
+            progress: {
+              phase: 'crawling',
+              crawling: true,
+              pagesScanned: count,
+              maxPages: cap,
+              totalPages: cap,
+              checked: 0,
+              total: 0,
+              batchSkip: skipScanned ? prior.pageCount : 0,
+              batchPick
+            }
           });
         },
-        onPageError: () => {}
+        onPageError: (url, errMsg) => {
+          broadcast({
+            type: MSG.SCAN_PROGRESS,
+            scanId,
+            progress: {
+              phase: 'crawling',
+              crawling: true,
+              pagesScanned: crawledPages.length,
+              maxPages,
+              totalPages: maxPages,
+              crawlError: `${url}: ${errMsg}`,
+              batchSkip: skipScanned ? prior.pageCount : 0,
+              batchPick
+            }
+          });
+        }
       });
+
+      if (abortController.signal.aborted) {
+        scan.status = 'cancelled';
+        scan.completedAt = Date.now();
+        scan.stats = { pages: crawledPages.length, links: 0, broken: 0 };
+        await updateScan(scan);
+        broadcast({ type: MSG.SCAN_COMPLETE, scanId, scan });
+        return scanId;
+      }
+
+      if (!crawledPages.length) {
+        const hint = skipScanned && prior.pageCount
+          ? ` No new pages left to scan for ${domain} (already have ${prior.pageCount} in history). Turn off “Skip previously scanned pages” in Settings, or delete old scans for this domain.`
+          : ' The start URL may have failed to load, or HTML could not be parsed. Try Current Page first.';
+        scan.status = 'error';
+        scan.error = `Domain crawl found 0 new pages.${hint}`;
+        scan.completedAt = Date.now();
+        scan.stats = { pages: 0, links: 0, broken: 0 };
+        await updateScan(scan);
+        broadcast({ type: MSG.SCAN_ERROR, scanId, error: scan.error });
+        return scanId;
+      }
+
+      // Count unique checkable URLs for accurate progress
+      const uniqueKeys = new Set();
+      for (const page of crawledPages) {
+        for (const l of page.links || []) {
+          if (l.checkType === 'hash') {
+            uniqueKeys.add(`hash:${l.href}`);
+            continue;
+          }
+          if (shouldSkipLinkHref(l.href) || !isHttpCheckableUrl(l.href)) continue;
+          try {
+            const u = new URL(l.href);
+            u.hash = '';
+            uniqueKeys.add(u.href);
+          } catch {
+            uniqueKeys.add(l.href);
+          }
+        }
+      }
+      const uniqueTotal = uniqueKeys.size;
+
+      broadcast({
+        type: MSG.SCAN_PROGRESS,
+        scanId,
+        progress: {
+          phase: 'checking',
+          crawling: false,
+          pagesScanned: crawledPages.length,
+          totalPages: crawledPages.length,
+          maxPages,
+          checked: 0,
+          total: Math.max(uniqueTotal, 1),
+          uniqueTotal: Math.max(uniqueTotal, 1)
+        }
+      });
+
+      if (uniqueTotal === 0) {
+        // Still persist crawled pages with zero links
+        for (let i = 0; i < crawledPages.length; i++) {
+          const page = crawledPages[i];
+          page.order = i;
+          page.links = page.links || [];
+          await processPage(scanId, page, settings, null);
+        }
+        scan.stats = { pages: crawledPages.length, links: 0, broken: 0 };
+        scan.status = 'completed';
+        scan.completedAt = Date.now();
+        await updateScan(scan);
+        broadcast({ type: MSG.SCAN_COMPLETE, scanId, scan });
+        return scanId;
+      }
 
       let totalLinks = 0;
       let totalBroken = 0;
+      let pagesProcessed = 0;
+      let linksCheckedBase = 0;
+
+      activeScan.totalPages = crawledPages.length;
+      activeScan.maxPages = maxPages;
+      activeScan.uniqueTotal = uniqueTotal;
+      activeScan.pagesProcessed = 0;
+      activeScan.linksCheckedBase = 0;
+      activeScan.brokenSoFar = 0;
 
       for (let i = 0; i < crawledPages.length; i++) {
         if (abortController.signal.aborted) break;
         const page = crawledPages[i];
         page.order = i;
+
+        activeScan.pagesProcessed = i;
+        activeScan.linksCheckedBase = linksCheckedBase;
+
+        const beforeCache = checker.cache.size;
         const { linkRecords, brokenCount } = await processPage(scanId, page, settings, null);
+        const newlyCached = Math.max(0, checker.cache.size - beforeCache);
+        linksCheckedBase = Math.min(uniqueTotal, linksCheckedBase + newlyCached);
+        pagesProcessed++;
         totalLinks += linkRecords.length;
         totalBroken += brokenCount;
+        activeScan.pagesProcessed = pagesProcessed;
+        activeScan.linksCheckedBase = linksCheckedBase;
+        activeScan.brokenSoFar = totalBroken;
+
         broadcast({
           type: MSG.SCAN_PROGRESS,
           scanId,
           progress: {
-            checked: totalLinks,
-            total: totalLinks,
-            pagesScanned: i + 1,
+            phase: 'checking',
+            crawling: false,
+            checked: linksCheckedBase || Math.round((pagesProcessed / crawledPages.length) * uniqueTotal),
+            total: uniqueTotal,
+            uniqueTotal,
+            pagesScanned: pagesProcessed,
             totalPages: crawledPages.length,
+            maxPages,
             broken: totalBroken
           }
         });

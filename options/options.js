@@ -109,6 +109,8 @@ async function loadSettings() {
   $('#maxPages').value = s.maxPages;
   $('#concurrency').value = s.concurrency;
   $('#maxLinks').value = s.maxLinksPerPage;
+  $('#skipScannedPages').checked = s.skipScannedPages !== false;
+  $('#batchPick').value = s.batchPick === 'random' ? 'random' : 'bfs';
   $('#checkAnchors').checked = s.linkTypes?.anchors !== false;
   $('#checkImages').checked = s.linkTypes?.images !== false;
   $('#checkScripts').checked = !!s.linkTypes?.scripts;
@@ -130,10 +132,15 @@ async function saveSettings() {
     )
   });
 
+  const existing = (await chrome.storage.local.get('settings')).settings || {};
   const settings = {
-    maxPages: parseInt($('#maxPages').value, 10) || 200,
+    ...DEFAULT_SETTINGS,
+    ...existing,
+    maxPages: parseInt($('#maxPages').value, 10) || 50,
     concurrency: parseInt($('#concurrency').value, 10) || 3,
     maxLinksPerPage: parseInt($('#maxLinks').value, 10) || 500,
+    skipScannedPages: $('#skipScannedPages').checked,
+    batchPick: $('#batchPick').value === 'random' ? 'random' : 'bfs',
     linkTypes: {
       anchors: $('#checkAnchors').checked,
       images: $('#checkImages').checked,

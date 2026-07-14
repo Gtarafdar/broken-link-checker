@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Broken Link Checker",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Find broken links on the current page, entire domain, or categories. Highlight issues, export CSV, and track scan history locally.",
   "minimum_chrome_version": "116",
   "permissions": [

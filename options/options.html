@@ -88,11 +88,35 @@
             </h2>
             <ul class="doc-list">
               <li><strong>Current page</strong> — extracts links from the DOM, deduplicates, then checks each unique URL.</li>
-              <li><strong>Domain</strong> — BFS crawl of same-origin pages (capped), then checks collected links.</li>
+              <li><strong>Entire domain</strong> — discovers same-origin pages in batches, then checks collected links (see Domain batches below).</li>
               <li><strong>Category</strong> — URL prefix, nav section, or sitemap filter before crawl.</li>
               <li>Checks use GET with redirects followed, per-host throttling, and retries on 429/503.</li>
               <li>Same-page <code>#anchors</code> are validated in the DOM (element id / name), not over HTTP.</li>
               <li>Non-page protocols (<code>mailto:</code>, <code>tel:</code>, apps, etc.) are skipped.</li>
+            </ul>
+          </article>
+
+          <article class="doc-card doc-card--wide">
+            <h2>
+              <svg class="opts-ico" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M3 3h8v8H3zm10 0h8v8h-8zM3 13h8v8H3zm13 0h2v3h3v2h-3v3h-2v-3h-3v-2h3z"/></svg>
+              Entire domain — batches
+            </h2>
+            <p class="doc-lede">
+              Large sites are easier when you scan in batches instead of one long crawl.
+              Configure this under <strong>Settings → Domain batches</strong>.
+            </p>
+            <ol class="doc-steps">
+              <li>Set <strong>Pages per batch</strong> (default <strong>50</strong>) — how many <em>new</em> pages each Entire Domain run adds.</li>
+              <li>Keep <strong>Skip pages already scanned for this domain</strong> on (default) so History is used as a “done” list for that root domain.</li>
+              <li>Choose how to pick pages: <strong>Discovery order</strong> (follow links as found) or <strong>Random sample</strong> from the queue.</li>
+              <li>Run <strong>Entire Domain</strong> (popup or sidebar). Watch progress: discovering pages, then checking unique URLs.</li>
+              <li>Run again on the same site for the <strong>next batch</strong> — already-scanned page URLs are skipped automatically.</li>
+              <li>When nothing new is left, you’ll get a clear message. To start over: turn skip off, or delete that domain’s scans in History.</li>
+            </ol>
+            <ul class="doc-list">
+              <li>The current tab is used as a seed for discovery even when that page was scanned before.</li>
+              <li>Batch settings apply to Domain and Category crawls; Current Page is unchanged.</li>
+              <li>Lower pages-per-batch for faster loops; raise it when you want bigger chunks.</li>
             </ul>
           </article>
 
@@ -140,7 +164,7 @@
             <ul class="doc-list">
               <li>Cannot authenticate into login walls or paywalled content.</li>
               <li>Only sees links present in the page DOM at scan time (SPA routes loaded later may be missed).</li>
-              <li>Domain crawl is capped (default 200 pages) for performance.</li>
+              <li>Domain crawl is capped per batch (default 50 new pages). Enable skip-already-scanned to continue in batches.</li>
               <li>Some CDNs block automated fetches even when browsers can open the URL.</li>
               <li>Not a full SEO crawler replacement for large sites (use Screaming Frog / Sitebulb for those).</li>
             </ul>
@@ -249,8 +273,9 @@
             <h2>Crawl &amp; checks</h2>
             <div class="settings-grid">
               <div>
-                <label class="label" for="maxPages">Max pages to crawl</label>
-                <input id="maxPages" class="input" type="number" min="50" max="1000" value="200">
+                <label class="label" for="maxPages">Pages per batch</label>
+                <input id="maxPages" class="input" type="number" min="5" max="1000" value="50">
+                <p class="field-hint">How many <strong>new</strong> pages each Domain / Category run adds. Example: 50 → another 50 on the next run.</p>
               </div>
               <div>
                 <label class="label" for="concurrency">Concurrent checks</label>
@@ -266,6 +291,36 @@
                 <label><input type="checkbox" id="checkImages" checked> Images</label>
                 <label><input type="checkbox" id="checkScripts"> Scripts</label>
                 <label><input type="checkbox" id="checkIframes"> Iframes</label>
+              </div>
+            </div>
+          </article>
+
+          <article class="card settings-block">
+            <h2>Domain batches</h2>
+            <p class="block-note">
+              Spread a large site across multiple runs for the same root domain.
+              Each batch only checks up to “Pages per batch” <em>new</em> pages.
+            </p>
+            <div class="settings-grid">
+              <div class="checkbox-group" style="grid-column: 1 / -1">
+                <label>
+                  <input type="checkbox" id="skipScannedPages" checked>
+                  Skip pages already scanned for this domain
+                </label>
+                <p class="field-hint" style="margin:0.35rem 0 0">
+                  Uses local History. Already-visited page URLs are not crawled again, so the next batch finds new pages.
+                  Turn off to re-scan everything. Delete a domain’s scans in History to reset the skip list.
+                </p>
+              </div>
+              <div style="grid-column: 1 / -1">
+                <label class="label" for="batchPick">How to pick pages in a batch</label>
+                <select id="batchPick" class="select">
+                  <option value="bfs">Discovery order (follow links as found)</option>
+                  <option value="random">Random sample from discovered links</option>
+                </select>
+                <p class="field-hint" style="margin:0.35rem 0 0">
+                  Discovery order is predictable (BFS). Random spreads coverage when you only need a sample each batch.
+                </p>
               </div>
             </div>
           </article>

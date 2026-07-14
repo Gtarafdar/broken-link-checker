@@ -212,24 +212,79 @@ function setStatus(text, type = 'ok') {
   badge.className = `badge badge-${type}`;
 }
 
+/** Keep sidebar mode select in sync with the scan that is actually running (e.g. started from popup). */
+function syncScanMode(mode) {
+  if (!mode || !['page', 'domain', 'category'].includes(mode)) return;
+  const select = $('#scanMode');
+  if (!select) return;
+
+  if (select.value !== mode) {
+    select.value = mode;
+  }
+
+  const isCategory = mode === 'category';
+  $('#categoryOptions')?.classList.toggle('hidden', !isCategory);
+  $('#domainModeTip')?.classList.toggle('hidden', mode === 'page');
+  if (isCategory && !$('#navSection')?.options?.length) {
+    loadNavSections().catch(() => {});
+  }
+}
+
 function setScanning(scanning) {
   $('#startScan').disabled = scanning;
   $('#cancelScan').classList.toggle('hidden', !scanning);
   $('#progressSection').classList.toggle('hidden', !scanning);
+  const modeSelect = $('#scanMode');
+  if (modeSelect) modeSelect.disabled = scanning;
+  $('#categoryType') && ($('#categoryType').disabled = scanning);
+  $('#categoryPrefix') && ($('#categoryPrefix').disabled = scanning);
+  $('#navSection') && ($('#navSection').disabled = scanning);
   if (scanning) setStatus('Scanning', 'running');
 }
 
 function updateProgress(progress) {
-  const { checked, total, pagesScanned, totalPages, broken, crawling } = progress;
+  const {
+    checked = 0,
+    total = 0,
+    pagesScanned = 0,
+    totalPages = 0,
+    maxPages = 0,
+    broken,
+    crawling,
+    phase,
+    batchSkip = 0,
+    batchPick = 'bfs'
+  } = progress || {};
+
+  const isCrawling = crawling || phase === 'crawling';
+  const pageCap = maxPages || totalPages || 0;
   let text = 'Scanning…';
   let pct = 0;
+  let detail = '';
 
-  if (crawling) {
-    text = `Crawling pages: ${pagesScanned}`;
-    pct = totalPages ? (pagesScanned / totalPages) * 50 : 10;
+  if (isCrawling) {
+    text = pageCap
+      ? `Discovering pages: ${pagesScanned} / ${pageCap}`
+      : `Discovering pages: ${pagesScanned}`;
+    if (batchSkip > 0) {
+      text += ` · skip ${batchSkip} known`;
+    }
+    if (batchPick === 'random') {
+      text += ' · random';
+    }
+    pct = pageCap ? Math.max(4, (pagesScanned / pageCap) * 45) : Math.min(40, 4 + pagesScanned * 2);
+    detail = batchSkip > 0
+      ? `Skipping ${batchSkip} pages already in History for this domain. This batch only adds new pages.`
+      : 'Whole-domain crawl finds pages first, then checks every unique link. You can Cancel anytime.';
+  } else if (totalPages > 1 && pagesScanned) {
+    text = `Checking page ${pagesScanned} / ${totalPages}`;
+    if (total > 0) text += ` · ~${checked}/${total} unique URLs`;
+    pct = 45 + (pagesScanned / totalPages) * 55;
+    detail = 'Cached duplicates skip network. Large sites take longer — lower Max pages in Settings if needed.';
   } else if (total > 0) {
-    text = `Checking links: ${checked}/${total}`;
-    pct = 50 + (checked / total) * 50;
+    text = `Checking links: ${checked} / ${total}`;
+    pct = Math.max(5, (checked / total) * 100);
+    detail = 'Verifying HTTP status for each unique URL.';
   } else if (pagesScanned) {
     text = `Pages scanned: ${pagesScanned}`;
     pct = 30;
@@ -237,6 +292,15 @@ function updateProgress(progress) {
 
   $('#progressText').textContent = text;
   $('#progressFill').style.width = `${Math.min(pct, 100)}%`;
+
+  const empty = $('#emptyState');
+  if (empty && !empty.classList.contains('hidden')) {
+    empty.innerHTML = `
+      <div class="spinner" style="margin:20px auto"></div>
+      <p><strong>${escapeHtml(text)}</strong></p>
+      <p class="progress-hint">${escapeHtml(detail || 'Working…')}</p>
+    `;
+  }
 
   const brokenBadge = $('#brokenCount');
   if (broken > 0) {
@@ -302,8 +366,14 @@ function renderResults() {
     list.classList.add('hidden');
     $('#reportCard').classList.add('hidden');
     empty.classList.remove('hidden');
+    empty.innerHTML = `
+      <div class="empty-state-icon">🔗</div>
+      <p>No pages were scanned.</p>
+      <p>Try <strong>Current Page</strong>, or check Max pages / that the site is reachable.</p>
+    `;
     $('#exportCsv').disabled = true;
     $('#exportSheets').disabled = true;
+    $('#recheckPage').classList.add('hidden');
     return;
   }
 
@@ -497,6 +567,7 @@ async function loadScan(scanId) {
   if (!scanId) return;
   scanData = await getScanWithDetails(scanId);
   currentScanId = scanId;
+  if (scanData?.scan?.mode) syncScanMode(scanData.scan.mode);
   renderResults();
 
   const broken = scanData?.links?.filter(isBrokenLink).length || 0;
@@ -513,7 +584,10 @@ async function startScan() {
   $('#resultsList').classList.add('hidden');
   $('#reportCard').classList.add('hidden');
   $('#emptyState').classList.remove('hidden');
-  $('#emptyState').innerHTML = '<div class="spinner" style="margin:20px auto"></div><p>Scanning links…</p>';
+  const startMsg = mode === 'domain' || mode === 'category'
+    ? 'Starting domain crawl… This can take a few minutes.'
+    : 'Scanning links…';
+  $('#emptyState').innerHTML = `<div class="spinner" style="margin:20px auto"></div><p>${startMsg}</p>`;
 
   try {
     const res = await chrome.runtime.sendMessage({
@@ -539,9 +613,12 @@ async function startScan() {
 }
 
 $('#scanMode').addEventListener('change', () => {
-  const isCategory = $('#scanMode').value === 'category';
+  const mode = $('#scanMode').value;
+  const isCategory = mode === 'category';
   $('#categoryOptions').classList.toggle('hidden', !isCategory);
   if (isCategory) loadNavSections();
+  const tip = $('#domainModeTip');
+  if (tip) tip.classList.toggle('hidden', mode === 'page');
 });
 
 $('#categoryType').addEventListener('change', () => {
@@ -602,32 +679,62 @@ $('#refreshNav').addEventListener('click', loadNavSections);
 chrome.runtime.onMessage.addListener((msg) => {
   if (msg.type === MSG.SCAN_PROGRESS) {
     if (msg.scanId) currentScanId = msg.scanId;
+    if (msg.mode) syncScanMode(msg.mode);
     setScanning(true);
     updateProgress(msg.progress || {});
   }
   if (msg.type === MSG.SCAN_COMPLETE) {
     setScanning(false);
+    if (msg.scan?.mode) syncScanMode(msg.scan.mode);
     loadScan(msg.scanId);
     const broken = msg.scan?.stats?.broken || 0;
-    setStatus(broken ? `${broken} broken` : 'All OK', broken ? 'broken' : 'ok');
+    const pages = msg.scan?.stats?.pages || 0;
+    if (!pages) {
+      setStatus('No pages', 'warning');
+    } else {
+      setStatus(broken ? `${broken} broken` : 'All OK', broken ? 'broken' : 'ok');
+    }
   }
   if (msg.type === MSG.SCAN_ERROR) {
     setScanning(false);
+    if (msg.mode) syncScanMode(msg.mode);
     setStatus('Error', 'broken');
     showToast(msg.error || 'Scan failed');
-    $('#emptyState').innerHTML = '<div class="empty-state-icon">⚠️</div><p>Scan failed. Try again.</p>';
+    $('#emptyState').classList.remove('hidden');
+    $('#resultsList').classList.add('hidden');
+    $('#reportCard').classList.add('hidden');
+    $('#emptyState').innerHTML = `
+      <div class="empty-state-icon">⚠️</div>
+      <p><strong>Scan failed</strong></p>
+      <p class="progress-hint">${escapeHtml(msg.error || 'Try Current Page, or lower Max pages in Settings.')}</p>
+    `;
   }
 });
 
-(async () => {
-  const res = await chrome.runtime.sendMessage({ type: MSG.GET_ACTIVE_SCAN });
-  if (res?.activeScan) {
-    currentScanId = res.activeScan.id;
+async function adoptActiveScan() {
+  try {
+    const res = await chrome.runtime.sendMessage({ type: MSG.GET_ACTIVE_SCAN });
+    const active = res?.activeScan;
+    if (!active || active.status !== 'running') return false;
+    currentScanId = active.id;
+    syncScanMode(active.mode);
     setScanning(true);
     setStatus('Scanning', 'running');
     $('#progressSection').classList.remove('hidden');
     $('#resultsList').classList.add('hidden');
+    $('#reportCard').classList.add('hidden');
     $('#emptyState').classList.remove('hidden');
-    $('#emptyState').innerHTML = '<div class="spinner" style="margin:20px auto"></div><p>Scanning links…</p>';
+    const modeLabel = { page: 'current page', domain: 'entire domain', category: 'category' }[active.mode] || 'scan';
+    $('#emptyState').innerHTML = `<div class="spinner" style="margin:20px auto"></div><p>Running ${modeLabel}…</p>`;
+    return true;
+  } catch {
+    return false;
   }
+}
+
+(async () => {
+  await adoptActiveScan();
+  // Popup opens the sidebar first, then starts the scan — retry briefly so mode catches up
+  setTimeout(() => adoptActiveScan(), 250);
+  setTimeout(() => adoptActiveScan(), 700);
 })();

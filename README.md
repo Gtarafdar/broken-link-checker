@@ -13,7 +13,7 @@
   <a href="https://gtarafdar.github.io/broken-link-checker/"><img src="https://img.shields.io/badge/Landing-GitHub%20Pages-1f6feb?style=flat-square" alt="Landing page" /></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-0d8f6b?style=flat-square" alt="MIT License" /></a>
   <a href="PRIVACY.md"><img src="https://img.shields.io/badge/Privacy-Local%20only-5a6b7c?style=flat-square" alt="Privacy" /></a>
-  <a href="https://github.com/Gtarafdar/broken-link-checker/releases"><img src="https://img.shields.io/badge/Download-ZIP%20v1.0.0-e8462f?style=flat-square" alt="Download" /></a>
+  <a href="https://github.com/Gtarafdar/broken-link-checker/releases"><img src="https://img.shields.io/badge/Download-ZIP%20v1.1.0-e8462f?style=flat-square" alt="Download" /></a>
   <a href="https://github.com/sponsors/Gtarafdar"><img src="https://img.shields.io/badge/Support-Donate-ea4aaa?style=flat-square&logo=githubsponsors" alt="Donate" /></a>
   <a href="https://github.com/Gtarafdar/broken-link-checker/stargazers"><img src="https://img.shields.io/github/stars/Gtarafdar/broken-link-checker?style=flat-square" alt="GitHub stars" /></a>
 </p>
@@ -48,19 +48,20 @@ Most link checkers want an account, a crawl budget, or a cloud upload. Broken Li
 
 ## Features
 
-- **Scan modes** — Current page, domain BFS crawl, or category-scoped (prefix / nav / sitemap)
+- **Scan modes** — Current page, domain batches, or category-scoped (prefix / nav / sitemap)
+- **Domain batches** — Skip pages already in History for that root domain; discovery order or random sample
 - **Side panel** — Live results grouped by page, progress, recheck, markers
 - **Page highlighting** — Broken links outlined on the page (persist until you clear)
 - **History library** — Searchable scans with expand-for-detail, CSV, copy-for-Sheets
 - **Export** — CSV download or clipboard TSV for Google Sheets / Excel (no Google API)
-- **Settings** — Crawl limits, concurrency, resource types, export column picker + live preview
+- **Settings** — Pages per batch, skip-scanned, concurrency, resource types, export columns + live preview
 - **Privacy-first** — No analytics, no cloud backend; see [PRIVACY.md](PRIVACY.md)
 
 ## Download
 
 | Package | Size | Notes |
 | --- | --- | --- |
-| [broken-link-checker-v1.0.0.zip](https://gtarafdar.github.io/broken-link-checker/download/broken-link-checker-v1.0.0.zip) | ≈ 56 KB | Unzip → Load unpacked in Chrome |
+| [broken-link-checker-v1.1.0.zip](https://gtarafdar.github.io/broken-link-checker/download/broken-link-checker-v1.1.0.zip) | ≈ 65 KB | Unzip → Load unpacked in Chrome |
 | [GitHub Releases](https://github.com/Gtarafdar/broken-link-checker/releases) | — | Preferred once a release is published |
 
 Or clone this repo and load the project root (the folder that contains `manifest.json`).

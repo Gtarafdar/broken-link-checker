@@ -51,6 +51,21 @@ body {
   flex-wrap: wrap;
 }
 
+.mode-tip {
+  margin: 0.45rem 0 0;
+  font-size: 0.72rem;
+  line-height: 1.4;
+  color: var(--text-muted, #8b9bb0);
+}
+
+.progress-hint {
+  font-size: 0.8rem;
+  color: var(--text-muted, #8b9bb0);
+  max-width: 16rem;
+  margin: 0.5rem auto 0;
+  line-height: 1.4;
+}
+
 .progress-section {
   margin-top: 10px;
 }
