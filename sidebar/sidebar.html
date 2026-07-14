@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Broken Link Checker</title>
+  <link rel="stylesheet" href="../styles/shared.css">
+  <link rel="stylesheet" href="sidebar.css">
+</head>
+<body>
+  <div class="sidebar-app">
+    <header class="sidebar-header">
+      <div class="header-top">
+        <h1>Broken Link Checker</h1>
+        <span id="statusBadge" class="badge badge-ok">Ready</span>
+      </div>
+      <div class="scan-controls">
+        <div class="control-row">
+          <label class="label" for="scanMode">Scan Mode</label>
+          <select id="scanMode" class="select">
+            <option value="page">Current Page</option>
+            <option value="domain">Entire Domain</option>
+            <option value="category">Category</option>
+          </select>
+        </div>
+        <div id="categoryOptions" class="category-options hidden">
+          <div class="control-row">
+            <label class="label" for="categoryType">Category Type</label>
+            <select id="categoryType" class="select">
+              <option value="prefix">URL Prefix</option>
+              <option value="nav">Nav / Menu Section</option>
+              <option value="sitemap">Sitemap</option>
+            </select>
+          </div>
+          <div id="prefixInput" class="control-row">
+            <label class="label" for="categoryPrefix">URL Prefix</label>
+            <input id="categoryPrefix" class="input" type="text" placeholder="/blog/">
+          </div>
+          <div id="navSelect" class="control-row hidden">
+            <label class="label" for="navSection">Menu Section</label>
+            <select id="navSection" class="select">
+              <option value="">Loading sections…</option>
+            </select>
+            <button id="refreshNav" class="btn btn-sm btn-secondary" type="button">Refresh</button>
+          </div>
+        </div>
+        <div class="btn-row">
+          <button id="startScan" class="btn btn-primary">Start Scan</button>
+          <button id="cancelScan" class="btn btn-secondary hidden">Cancel</button>
+          <button id="recheckPage" class="btn btn-secondary hidden">Recheck Page</button>
+        </div>
+      </div>
+      <div id="progressSection" class="progress-section hidden">
+        <div class="progress-info">
+          <span id="progressText">Scanning…</span>
+          <span id="brokenCount" class="badge badge-broken hidden">0 broken</span>
+        </div>
+        <div class="progress-bar">
+          <div id="progressFill" class="progress-bar-fill" style="width:0%"></div>
+        </div>
+      </div>
+    </header>
+
+    <main id="results" class="results-area">
+      <div class="empty-state" id="emptyState">
+        <div class="empty-state-icon">🔗</div>
+        <p>No scan results yet.</p>
+        <p>Choose a scan mode and click <strong>Start Scan</strong>.</p>
+      </div>
+      <div id="reportCard" class="report-card hidden"></div>
+      <div id="resultsList" class="results-list hidden"></div>
+      <canvas id="confettiCanvas" class="confetti-canvas"></canvas>
+    </main>
+
+    <footer class="sidebar-footer">
+      <button id="exportCsv" class="btn btn-sm btn-secondary has-tip" disabled data-tip="Download CSV for Excel">Export CSV</button>
+      <button id="exportSheets" class="btn btn-sm btn-secondary has-tip" disabled data-tip="Copy table + open Google Sheets — paste with Ctrl/Cmd+V">Open in Sheets</button>
+      <button id="clearMarkers" class="btn btn-sm btn-secondary has-tip" data-tip="Remove red highlights from the page">Clear Markers</button>
+      <button id="openOptions" class="btn btn-sm btn-secondary has-tip" data-tip="Open scan history and settings">History</button>
+    </footer>
+  </div>
+
+  <div id="toast" class="toast hidden"></div>
+
+  <script type="module" src="sidebar.js"></script>
+</body>
+</html>

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Broken Link Checker</title>
+  <link rel="stylesheet" href="../styles/shared.css">
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="popup-app">
+    <header class="popup-header">
+      <img src="../icons/icon32.png" alt="" width="24" height="24">
+      <h1>Broken Link Checker</h1>
+    </header>
+
+    <div id="lastScan" class="last-scan hidden">
+      <div class="last-scan-info">
+        <span id="lastDomain" class="last-domain"></span>
+        <span id="lastStats" class="last-stats"></span>
+      </div>
+      <span id="lastTime" class="last-time"></span>
+    </div>
+
+    <div class="popup-actions">
+      <button id="scanPage" class="btn btn-primary btn-block">Scan Current Page</button>
+      <button id="scanDomain" class="btn btn-secondary btn-block">Scan Entire Domain</button>
+      <button id="openSidebar" class="btn btn-secondary btn-block">Open Sidebar</button>
+      <button id="openOptions" class="btn btn-secondary btn-block">History & Settings</button>
+    </div>
+
+    <footer class="popup-footer">
+      <button id="clearMarkers" class="btn btn-sm btn-secondary">Clear Markers</button>
+    </footer>
+  </div>
+
+  <script type="module" src="popup.js"></script>
+</body>
+</html>

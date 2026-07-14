@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Broken Link Checker — Local scan toolbox for Chrome</title>
+  <meta name="description" content="Find broken links without leaving the page. A free, privacy-first Chrome side-panel extension. Scan locally, store results in IndexedDB, export to Sheets or Excel. No account. No API keys." />
+  <meta name="theme-color" content="#0b1219" />
+  <link rel="icon" href="assets/icon48.png" type="image/png" />
+  <link rel="canonical" href="https://gtarafdar.github.io/broken-link-checker/" />
+  <meta property="og:title" content="Broken Link Checker — Local scan toolbox" />
+  <meta property="og:description" content="Chrome side-panel tool that finds broken links on the page you’re viewing. Fully local. Free & open source." />
+  <meta property="og:image" content="https://gtarafdar.github.io/broken-link-checker/assets/shot-welcome.png" />
+  <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,620&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+
+  <header class="site-nav">
+    <div class="site-nav__inner">
+      <a class="brand" href="#top">
+        <img src="assets/icon128.png" width="36" height="36" alt="" />
+        <span>Broken Link Checker</span>
+      </a>
+      <ul class="nav-links" aria-label="Page sections">
+        <li><a href="#how">How it works</a></li>
+        <li><a href="#install">Install</a></li>
+        <li><a href="#faq">FAQ</a></li>
+        <li><a href="#support">Support</a></li>
+        <li><a href="#about">About</a></li>
+      </ul>
+      <div class="nav-cta">
+        <a class="btn btn--ghost" href="https://github.com/Gtarafdar/broken-link-checker" rel="noopener">
+          <svg class="icon-sm" viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8"/></svg>
+          GitHub
+        </a>
+        <a class="btn btn--primary" href="#download">Download</a>
+      </div>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="hero wrap" id="top">
+      <div class="hero__grid">
+        <div class="reveal">
+          <p class="hero__kicker">Chrome extension · fully local · MIT</p>
+          <h1>Find broken links <em>without</em> leaving the page.</h1>
+          <p class="hero__copy">
+            A lightweight Chrome side-panel toolbox that checks HTTP links on the page you’re viewing,
+            stores results in this browser only, and exports clean tables for Sheets or Excel —
+            no account, no API keys, no cloud crawl.
+          </p>
+          <div class="hero__actions" id="download">
+            <a class="btn btn--accent" href="download/broken-link-checker-v1.0.0.zip" download>
+              Download v1.0.0 · ZIP
+            </a>
+            <a class="btn btn--ghost" href="https://github.com/Gtarafdar/broken-link-checker" rel="noopener">
+              View source
+            </a>
+            <a class="btn btn--ghost" href="https://github.com/Gtarafdar/broken-link-checker/stargazers" rel="noopener" title="Star on GitHub">
+              ★ Star
+            </a>
+          </div>
+          <ul class="hero__meta">
+            <li>Manifest V3</li>
+            <li>IndexedDB history</li>
+            <li>Side panel + Options</li>
+            <li>≈ 56 KB package</li>
+          </ul>
+        </div>
+        <div class="hero__shot reveal reveal-d1">
+          <figure>
+            <img src="assets/shot-welcome.png" width="960" height="660" alt="Broken Link Checker options Welcome overview with how-to and status codes" />
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <section class="workbench wrap" aria-label="Product screenshots">
+      <div class="workbench__rail">
+        <figure class="shot-card reveal">
+          <img src="assets/shot-welcome.png" width="640" height="440" alt="Welcome overview screen" loading="lazy" />
+          <figcaption>
+            <strong>Welcome</strong>
+            Overview, status legend, and privacy note in the Options workbench.
+          </figcaption>
+        </figure>
+        <figure class="shot-card reveal reveal-d1">
+          <img src="assets/shot-history.png" width="640" height="440" alt="Scan history with broken link detail" loading="lazy" />
+          <figcaption>
+            <strong>Scan history</strong>
+            Expand a row for broken-link detail, CSV, and copy-for-Sheets.
+          </figcaption>
+        </figure>
+        <figure class="shot-card reveal reveal-d2">
+          <img src="assets/shot-settings.png" width="640" height="440" alt="Settings for crawl limits and copy columns" loading="lazy" />
+          <figcaption>
+            <strong>Settings</strong>
+            Crawl limits, resource types, and a live preview of your export columns.
+          </figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section class="section wrap" id="how">
+      <p class="section__eyebrow">How it works</p>
+      <h2 class="section__title">Scan here. Keep results here.</h2>
+      <p class="section__lede">
+        The extension reads the live DOM, checks reachable HTTP(S) URLs with throttled GET requests,
+        and highlights broken targets on the page. Same-origin crawls can walk a small BFS when you ask for it.
+      </p>
+      <div class="features">
+        <article class="feature">
+          <h3>Side panel live results</h3>
+          <p>Open the extension on any http(s) page. Review links by page, recheck, and jump to markers without a separate dashboard.</p>
+        </article>
+        <article class="feature">
+          <h3>Local history only</h3>
+          <p>Completed and failed scans stay in IndexedDB on this device. Delete one scan or wipe everything from Options → History.</p>
+        </article>
+        <article class="feature">
+          <h3>Export without uploads</h3>
+          <p>Copy table for Sheets/Excel, or download CSV. Nothing is sent to a server — paste is yours to own.</p>
+        </article>
+        <article class="feature">
+          <h3>Respectful checking</h3>
+          <p>Per-host throttle, concurrency caps, and honest handling of 429 / timeouts so rate limits don’t look like “broken.”</p>
+        </article>
+        <article class="feature">
+          <h3>Hash &amp; non-HTTP skip</h3>
+          <p>On-page fragments are verified in the DOM. mailto, tel, and other non-page protocols are skipped on purpose.</p>
+        </article>
+        <article class="feature">
+          <h3>Configurable toolbox</h3>
+          <p>Max pages, concurrency, max links per page, which resource types to check, and which columns land in your clipboard.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="install" id="install">
+      <div class="wrap">
+        <p class="section__eyebrow">Install</p>
+        <h2 class="section__title">Load the ZIP in Chrome in under a minute</h2>
+        <p class="section__lede">
+          Chrome Web Store listing may come later. Until then, install from the open-source package —
+          same flow as any developer extension.
+        </p>
+        <ol class="steps">
+          <li>
+            <div>
+              <strong>Download the package</strong>
+              Grab <code>broken-link-checker-v1.0.0.zip</code> from this page or the
+              <a href="https://github.com/Gtarafdar/broken-link-checker/releases" rel="noopener">GitHub Releases</a> tab.
+            </div>
+          </li>
+          <li>
+            <div>
+              <strong>Unzip</strong>
+              Extract the folder somewhere permanent (don’t delete it after install — Chrome loads from that path).
+            </div>
+          </li>
+          <li>
+            <div>
+              <strong>Open Chrome extensions</strong>
+              Go to <code>chrome://extensions</code>, turn on <strong>Developer mode</strong> (top right).
+            </div>
+          </li>
+          <li>
+            <div>
+              <strong>Load unpacked</strong>
+              Click <strong>Load unpacked</strong> and select the unzipped extension folder (the one that contains <code>manifest.json</code>).
+            </div>
+          </li>
+          <li>
+            <div>
+              <strong>Pin &amp; open the side panel</strong>
+              Pin the icon, open a web page, click the extension, and use <strong>Open sidebar</strong> for live results.
+              Options → Welcome has the full how-to.
+            </div>
+          </li>
+        </ol>
+        <div class="install__actions">
+          <a class="btn btn--accent" href="download/broken-link-checker-v1.0.0.zip" download>Download ZIP package</a>
+          <a class="btn btn--ghost" href="https://github.com/Gtarafdar/broken-link-checker#how-to-install" rel="noopener" style="border-color:rgba(255,255,255,.2);color:#fff">README install notes</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="section wrap" id="faq">
+      <p class="section__eyebrow">FAQ</p>
+      <h2 class="section__title">Straight answers</h2>
+      <div class="faq">
+        <details open>
+          <summary>Does this upload my browsing data?</summary>
+          <p>No. Scans and history stay in Chrome’s local storage / IndexedDB on your machine. There is no analytics endpoint and no account. See <a href="https://github.com/Gtarafdar/broken-link-checker/blob/main/PRIVACY.md">PRIVACY.md</a>.</p>
+        </details>
+        <details>
+          <summary>Why do I see 429 instead of “broken”?</summary>
+          <p>Many sites rate-limit aggressive checkers. The tool throttles requests and treats 429 / some 503 responses as rate-limited — not the same as a dead 404. Retry later or lower concurrency in Settings.</p>
+        </details>
+        <details>
+          <summary>Can it crawl my whole site like Screaming Frog?</summary>
+          <p>No. It is a lightweight on-page / same-origin helper. Domain mode uses a bounded BFS with your max-page setting. It does not replace full SEO crawlers, authenticated lab crawls, or CI link checkers.</p>
+        </details>
+        <details>
+          <summary>Will it find links behind login walls or late SPA routes?</summary>
+          <p>Only what the tab can already see. If you are not authenticated, or a route loads after the scan starts, those URLs may be missed. Re-run after the UI settles.</p>
+        </details>
+        <details>
+          <summary>How do I paste into Google Sheets?</summary>
+          <p>In History, expand a scan, use <strong>Copy table</strong> (or Open in Sheets for a blank sheet), then paste with Ctrl/Cmd+V. Nothing is uploaded automatically.</p>
+        </details>
+        <details>
+          <summary>Is it affiliated with Google?</summary>
+          <p>No. Independent open-source project by Gobinda Tarafdar. “Chrome” is a trademark of Google LLC. This extension is not affiliated with or endorsed by Google.</p>
+        </details>
+      </div>
+    </section>
+
+    <section class="support" id="support">
+      <div class="wrap support__grid">
+        <div>
+          <p class="section__eyebrow">Support the workshop</p>
+          <h2 class="section__title">Free tool. Stars &amp; tips keep it lit.</h2>
+          <p class="section__lede">
+            Broken Link Checker is MIT-licensed and ships without ads or tracking.
+            A GitHub star helps others find it. A small donation funds coffee and continued polish.
+          </p>
+          <p class="support__note">If GitHub Sponsors isn’t available yet, use the donate link on the maker’s site or star the repo — both help.</p>
+        </div>
+        <div class="support__actions">
+          <a class="btn btn--primary" href="https://github.com/Gtarafdar/broken-link-checker" rel="noopener">
+            <svg class="icon-sm" viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 .25a.75.75 0 0 1 .673.418l1.882 3.815 4.21.612a.75.75 0 0 1 .416 1.279l-3.046 2.97.719 4.192a.75.75 0 0 1-1.088.791L8 12.347l-3.766 1.98a.75.75 0 0 1-1.088-.79l.72-4.194L.818 6.374a.75.75 0 0 1 .416-1.28l4.21-.611L7.327.668A.75.75 0 0 1 8 .25"/></svg>
+            Star on GitHub
+          </a>
+          <a class="btn btn--signal" href="https://github.com/sponsors/Gtarafdar" rel="noopener">Donate / Sponsor</a>
+          <a class="btn btn--ghost" href="https://x.com/gtarafdarr" rel="noopener">X / Twitter</a>
+          <a class="btn btn--ghost" href="https://www.linkedin.com/in/gtarafdar/" rel="noopener">LinkedIn</a>
+          <a class="btn btn--ghost" href="mailto:gobinda.ext1@gmail.com">Email</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="section wrap" id="about">
+      <p class="section__eyebrow">About the maker</p>
+      <h2 class="section__title">Gobinda Tarafdar</h2>
+      <div class="about">
+        <img class="about__photo" src="assets/gobinda.jpg" width="200" height="200" alt="Portrait of Gobinda Tarafdar" />
+        <div>
+          <h3>Gobinda Tarafdar</h3>
+          <p class="about__role">WordPress product marketer · stubborn problem-solver · lifelong Harry Potter devotee</p>
+          <p>
+            By day I am the Product Marketing Specialist at
+            <a href="https://wpbakery.com/" rel="noopener">WPBakery</a>, the page builder that quietly powers a sizeable corner of the WordPress universe.
+            Before that, I helped a single plugin cross 400,000+ active users through positioning, user research, and a relentless focus on what actually moves the needle.
+          </p>
+          <p>
+            When the day-job owl flies home, I tinker on my own little workshop of spells.
+            Broken Link Checker is one of them: a local toolbox so you can catch dead links without handing your crawl to the cloud.
+          </p>
+          <div class="about__links">
+            <a href="https://github.com/Gtarafdar/" rel="noopener">GitHub</a>
+            <a href="https://gtarafdar.com" rel="noopener">gtarafdar.com</a>
+            <a href="https://x.com/gtarafdarr" rel="noopener">X</a>
+            <a href="https://gtarafdar.github.io/slack-agent-bridge/" rel="noopener">Slack Agent Bridge</a>
+            <a href="mailto:gobinda.ext1@gmail.com">gobinda.ext1@gmail.com</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="privacy-strip wrap">
+      <div class="privacy-strip__box">
+        <strong>Privacy.</strong>
+        Data stays on this device. No analytics. No account.
+        Full policy:
+        <a href="https://github.com/Gtarafdar/broken-link-checker/blob/main/PRIVACY.md">PRIVACY.md</a>
+        · License:
+        <a href="https://github.com/Gtarafdar/broken-link-checker/blob/main/LICENSE">MIT</a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap site-footer__inner">
+      <p>Broken Link Checker · MIT © 2026 Gobinda Tarafdar</p>
+      <nav aria-label="Footer">
+        <a href="#install">Install</a>
+        <a href="#faq">FAQ</a>
+        <a href="#support">Support</a>
+        <a href="https://github.com/Gtarafdar/broken-link-checker" rel="noopener">GitHub</a>
+        <a href="download/broken-link-checker-v1.0.0.zip" download>Download</a>
+      </nav>
+    </div>
+  </footer>
+</body>
+</html>

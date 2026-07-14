@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Broken Link Checker</title>
+  <link rel="stylesheet" href="../styles/shared.css">
+  <link rel="stylesheet" href="options.css">
+</head>
+<body>
+  <div class="opts-shell">
+    <aside class="opts-nav" aria-label="Options navigation">
+      <div class="opts-brand">
+        <img src="../icons/icon32.png" width="28" height="28" alt="">
+        <div>
+          <div class="opts-brand-name">Broken Link Checker</div>
+          <div class="opts-brand-meta">Local scan toolbox</div>
+        </div>
+      </div>
+      <nav class="opts-nav-list" role="tablist">
+        <button type="button" class="opts-nav-item is-active" role="tab" aria-selected="true" data-tab="welcome">
+          <svg class="opts-ico" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm1 15h-2v-6h2zm0-8h-2V7h2z"/></svg>
+          <span>Welcome</span>
+        </button>
+        <button type="button" class="opts-nav-item" role="tab" aria-selected="false" data-tab="history">
+          <svg class="opts-ico" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M13 3a9 9 0 0 0-9 9H1l3.9 3.9L8.8 12H6a7 7 0 1 1 1.7 4.6l-1.4 1.4A9 9 0 1 0 13 3zm-1 5v5l4.3 2.5.7-1.2-3.5-2.1V8z"/></svg>
+          <span>History</span>
+        </button>
+        <button type="button" class="opts-nav-item" role="tab" aria-selected="false" data-tab="settings">
+          <svg class="opts-ico" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M19.1 12.9a7.5 7.5 0 0 0 .1-1.1 7.5 7.5 0 0 0-.1-1.1l2-1.6-1.9-3.3-2.4 1a7.4 7.4 0 0 0-1.9-1.1L14.5 2h-5L9 5.7a7.4 7.4 0 0 0-1.9 1.1l-2.4-1L2.8 9.1l2 1.6a7.5 7.5 0 0 0-.1 1.1 7.5 7.5 0 0 0 .1 1.1l-2 1.6 1.9 3.3 2.4-1a7.4 7.4 0 0 0 1.9 1.1L9.5 22h5l.4-3.7a7.4 7.4 0 0 0 1.9-1.1l2.4 1 1.9-3.3zM12 15.5A3.5 3.5 0 1 1 15.5 12 3.5 3.5 0 0 1 12 15.5z"/></svg>
+          <span>Settings</span>
+        </button>
+      </nav>
+      <div class="opts-nav-footer">
+        <button type="button" id="openSidebar" class="btn btn-secondary btn-block" title="Open the side panel on your active tab">Open sidebar</button>
+      </div>
+    </aside>
+
+    <div class="opts-main">
+      <!-- WELCOME -->
+      <section id="tab-welcome" class="opts-panel is-active" role="tabpanel">
+        <header class="panel-hero">
+          <p class="eyebrow">Overview</p>
+          <h1>Find broken links without leaving the page</h1>
+          <p class="lede">
+            A lightweight Chrome side-panel tool that checks HTTP links on the current page,
+            across a domain, or within a category — stores results locally, highlights issues on the page,
+            and exports tables you can paste into Sheets or Excel. No account and no API keys.
+          </p>
+          <div class="hero-actions">
+            <button type="button" class="btn btn-primary" data-goto="history">View history</button>
+            <button type="button" class="btn btn-secondary" data-goto="settings">Configure settings</button>
+          </div>
+        </header>
+
+        <div class="doc-grid">
+          <article class="doc-card">
+            <h2>
+              <svg class="opts-ico" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M9 16.2 4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z"/></svg>
+              How to use
+            </h2>
+            <ol class="doc-steps">
+              <li>Open any http(s) page in Chrome.</li>
+              <li>Click the extension icon, then <strong>Scan Current Page</strong> (or open the sidebar and press Start Scan).</li>
+              <li>Review broken links in the sidebar, grouped by page. Use scroll-to and recheck per row.</li>
+              <li>Export with CSV or Open in Sheets (clipboard TSV + sheets.new — paste with Ctrl/Cmd+V).</li>
+              <li>Open this Options page for history, settings, and documentation.</li>
+            </ol>
+          </article>
+
+          <article class="doc-card">
+            <h2>
+              <svg class="opts-ico" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2 4.5 20.3l.7.7L12 18l6.8 3 .7-.7z"/></svg>
+              Where to open it
+            </h2>
+            <ul class="doc-list">
+              <li><strong>Toolbar icon</strong> — popup with quick scan actions.</li>
+              <li><strong>Side panel</strong> — live results while you browse.</li>
+              <li><strong>Options page</strong> — this window (right-click the icon → Options, or History from the sidebar).</li>
+              <li>Install / reload from <code>chrome://extensions</code> → Load unpacked while developing.</li>
+            </ul>
+          </article>
+
+          <article class="doc-card">
+            <h2>
+              <svg class="opts-ico" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M15.5 14h-.8l-.3-.3A6.5 6.5 0 1 0 14 15.5l.3.3v.8l5 5 1.5-1.5zm-6 0A4.5 4.5 0 1 1 14 9.5 4.5 4.5 0 0 1 9.5 14z"/></svg>
+              How scanning works
+            </h2>
+            <ul class="doc-list">
+              <li><strong>Current page</strong> — extracts links from the DOM, deduplicates, then checks each unique URL.</li>
+              <li><strong>Domain</strong> — BFS crawl of same-origin pages (capped), then checks collected links.</li>
+              <li><strong>Category</strong> — URL prefix, nav section, or sitemap filter before crawl.</li>
+              <li>Checks use GET with redirects followed, per-host throttling, and retries on 429/503.</li>
+              <li>Same-page <code>#anchors</code> are validated in the DOM (element id / name), not over HTTP.</li>
+              <li>Non-page protocols (<code>mailto:</code>, <code>tel:</code>, apps, etc.) are skipped.</li>
+            </ul>
+          </article>
+
+          <article class="doc-card">
+            <h2>
+              <svg class="opts-ico" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm1 15h-2v-2h2zm0-4h-2V7h2z"/></svg>
+              Status codes &amp; results
+            </h2>
+            <div class="status-table-wrap">
+              <table class="data-table status-ref">
+                <thead>
+                  <tr><th>Result</th><th>Meaning</th></tr>
+                </thead>
+                <tbody>
+                  <tr><td><span class="badge badge-ok">2xx / 3xx</span></td><td>Reachable (redirects counted healthy after follow).</td></tr>
+                  <tr><td><span class="badge badge-broken">4xx / 5xx</span></td><td>Broken or server error for that URL.</td></tr>
+                  <tr><td><span class="badge badge-warning">429 / 503</span></td><td>Rate limited — retried; not treated as a permanent broken link if resolved.</td></tr>
+                  <tr><td><span class="badge badge-warning">timeout</span></td><td>No response within the timeout window.</td></tr>
+                  <tr><td><span class="badge badge-broken">error</span></td><td>Network failure or unusable response.</td></tr>
+                  <tr><td><span class="badge badge-ok">hash OK</span></td><td>On-page fragment target found in the DOM.</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </article>
+
+          <article class="doc-card">
+            <h2>
+              <svg class="opts-ico" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 1 3 5v6c0 5.6 3.8 10.7 9 12 5.2-1.3 9-6.4 9-12V5zm0 10.99h7c-.5 3.9-3.1 7.4-7 8.7V12H5V6.3l7-3.11z"/></svg>
+              Benefits
+            </h2>
+            <ul class="doc-list">
+              <li>Works beside the live page with persistent markers until you clear them.</li>
+              <li>History stored in IndexedDB on your machine — no cloud sync.</li>
+              <li>Throttled requests reduce false failures from rate limits.</li>
+              <li>CSV / Sheets paste without Google API credentials.</li>
+              <li>Configurable crawl caps, concurrency, and copy columns.</li>
+            </ul>
+          </article>
+
+          <article class="doc-card">
+            <h2>
+              <svg class="opts-ico" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M1 21h22L12 2 1 21zm12-3h-2v-2h2zm0-4h-2v-4h2z"/></svg>
+              Limitations
+            </h2>
+            <ul class="doc-list">
+              <li>Cannot authenticate into login walls or paywalled content.</li>
+              <li>Only sees links present in the page DOM at scan time (SPA routes loaded later may be missed).</li>
+              <li>Domain crawl is capped (default 200 pages) for performance.</li>
+              <li>Some CDNs block automated fetches even when browsers can open the URL.</li>
+              <li>Not a full SEO crawler replacement for large sites (use Screaming Frog / Sitebulb for those).</li>
+            </ul>
+          </article>
+        </div>
+
+        <aside class="privacy-note" id="privacy">
+          <h2>
+            <svg class="opts-ico" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 1 3 5v6c0 5.6 3.8 10.7 9 12 5.2-1.3 9-6.4 9-12V5zm0 10.99h7c-.5 3.9-3.1 7.4-7 8.7V12H5V6.3l7-3.11z"/></svg>
+            Privacy
+          </h2>
+          <p>
+            Broken Link Checker does <strong>not</strong> collect, sell, or transmit your personal data to us.
+            Scan results, history, and settings stay in <strong>your browser</strong> (Chrome local storage and IndexedDB).
+            When you run a scan, the extension only sends HTTP requests to the URLs being checked (the sites you are scanning)
+            to read status codes — the same kind of request a normal browser would make. Nothing is uploaded to our servers;
+            we do not operate a backend for this extension. You can delete stored scans anytime from History → Delete all data.
+          </p>
+          <p class="privacy-meta">
+            Full details: see <code>PRIVACY.md</code> in the extension package.
+            Single purpose: help you find broken links on pages you choose to scan.
+          </p>
+        </aside>
+      </section>
+
+      <!-- HISTORY -->
+      <section id="tab-history" class="opts-panel" role="tabpanel" hidden>
+        <header class="panel-head">
+          <div>
+            <p class="eyebrow">Library</p>
+            <h1>Scan history</h1>
+            <p class="panel-desc">Every completed or failed scan stored in this browser. Expand a row for broken-link detail and exports.</p>
+          </div>
+          <button type="button" id="deleteAll" class="btn btn-danger" title="Delete all local scan data">Delete all data</button>
+        </header>
+
+        <div class="stat-row" id="historyStats">
+          <div class="stat-card">
+            <div class="stat-label">Total scans</div>
+            <div class="stat-value" id="statScans">0</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Pages scanned</div>
+            <div class="stat-value" id="statPages">0</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Broken links</div>
+            <div class="stat-value stat-value--danger" id="statBroken">0</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Domains</div>
+            <div class="stat-value" id="statDomains">0</div>
+          </div>
+        </div>
+
+        <div class="history-toolbar">
+          <input id="searchInput" class="input" type="search" placeholder="Search by domain, mode, or category…">
+        </div>
+
+        <div class="card table-card">
+          <div class="table-wrap">
+            <table class="data-table" id="historyTable">
+              <thead>
+                <tr>
+                  <th></th>
+                  <th>Domain</th>
+                  <th>Mode</th>
+                  <th>Date</th>
+                  <th>Pages</th>
+                  <th>Broken</th>
+                  <th>Status</th>
+                  <th title="CSV downloads a file. Expand a row to copy/paste into Google Sheets.">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="historyBody">
+                <tr><td colspan="8" class="empty-state">Loading…</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="pagination" id="pagination">
+            <button id="prevPage" class="btn btn-sm btn-secondary" disabled>Prev</button>
+            <span id="pageInfo">Page 1 of 1</span>
+            <select id="pageSize" class="select" style="width:auto" title="Rows per page">
+              <option value="10">10</option>
+              <option value="20" selected>20</option>
+              <option value="50">50</option>
+            </select>
+            <button id="nextPage" class="btn btn-sm btn-secondary" disabled>Next</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- SETTINGS -->
+      <section id="tab-settings" class="opts-panel" role="tabpanel" hidden>
+        <header class="panel-head">
+          <div>
+            <p class="eyebrow">Preferences</p>
+            <h1>Settings</h1>
+            <p class="panel-desc">Crawl limits, which resources to check, and which columns are included when you copy for Sheets or Excel.</p>
+          </div>
+          <button type="button" id="saveSettings" class="btn btn-primary">Save settings</button>
+        </header>
+
+        <div class="settings-blocks">
+          <article class="card settings-block">
+            <h2>Crawl &amp; checks</h2>
+            <div class="settings-grid">
+              <div>
+                <label class="label" for="maxPages">Max pages to crawl</label>
+                <input id="maxPages" class="input" type="number" min="50" max="1000" value="200">
+              </div>
+              <div>
+                <label class="label" for="concurrency">Concurrent checks</label>
+                <input id="concurrency" class="input" type="number" min="2" max="10" value="3">
+              </div>
+              <div>
+                <label class="label" for="maxLinks">Max links per page</label>
+                <input id="maxLinks" class="input" type="number" min="100" max="1000" value="500">
+              </div>
+              <div class="checkbox-group">
+                <span class="label">Resource types</span>
+                <label><input type="checkbox" id="checkAnchors" checked> Anchor links</label>
+                <label><input type="checkbox" id="checkImages" checked> Images</label>
+                <label><input type="checkbox" id="checkScripts"> Scripts</label>
+                <label><input type="checkbox" id="checkIframes"> Iframes</label>
+              </div>
+            </div>
+          </article>
+
+          <article class="card settings-block">
+            <h2>Copy for Sheets / Excel</h2>
+            <p class="block-note">Choose which fields are included when you use Copy table, Copy row, or similar actions. Preview updates immediately.</p>
+
+            <label class="check-inline">
+              <input type="checkbox" id="copyIncludeHeader" checked>
+              Include header row
+            </label>
+
+            <div class="copy-cols" id="copyColumnChecks"></div>
+
+            <div class="preview-head">
+              <h3>Live preview</h3>
+              <span class="preview-meta" id="copyPreviewMeta"></span>
+            </div>
+            <div class="card preview-card">
+              <div class="table-wrap">
+                <table class="data-table" id="copyPreviewTable">
+                  <thead></thead>
+                  <tbody></tbody>
+                </table>
+              </div>
+            </div>
+          </article>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <div id="toast" class="toast hidden"></div>
+  <footer class="opts-global-privacy">
+    Data stays on this device. No analytics. No account.
+    <a href="#welcome" id="privacyLink">Privacy</a>
+  </footer>
+  <script type="module" src="options.js"></script>
+</body>
+</html>

@@ -1,0 +1,387 @@
+body {
+  min-width: 320px;
+  overflow-x: hidden;
+}
+
+.sidebar-app {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background: var(--bg);
+}
+
+.sidebar-header {
+  padding: 12px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.header-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.header-top h1 {
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.scan-controls .control-row {
+  margin-bottom: 8px;
+}
+
+.category-options {
+  padding: 8px;
+  background: var(--surface-2);
+  border-radius: var(--radius);
+  margin-bottom: 8px;
+}
+
+.category-options.hidden,
+.hidden {
+  display: none !important;
+}
+
+.btn-row {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.progress-section {
+  margin-top: 10px;
+}
+
+.progress-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.results-area {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px;
+}
+
+.results-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.page-group {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: visible;
+}
+
+.page-group .table-wrap {
+  overflow-x: auto;
+  overflow-y: visible;
+  padding-bottom: 4px;
+}
+
+.page-group .data-table td:last-child {
+  overflow: visible;
+  position: relative;
+  z-index: 2;
+}
+
+.page-group-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  background: var(--surface-2);
+  cursor: pointer;
+  user-select: none;
+}
+
+.page-group-header:hover {
+  background: var(--border);
+}
+
+.page-group-title {
+  font-weight: 600;
+  font-size: 12px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 70%;
+}
+
+.page-group-url {
+  font-size: 11px;
+  color: var(--text-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding: 0 12px 6px;
+}
+
+.page-group-body {
+  display: none;
+}
+
+.page-group-body.open {
+  display: block;
+}
+
+.page-group-actions {
+  display: flex;
+  gap: 4px;
+}
+
+.link-row td {
+  vertical-align: top;
+}
+
+.link-text {
+  max-width: 100px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.link-href {
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--primary);
+  font-size: 11px;
+}
+
+.row-actions {
+  display: flex;
+  gap: 2px;
+}
+
+.sidebar-footer {
+  display: flex;
+  gap: 4px;
+  padding: 8px;
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  flex-shrink: 0;
+  flex-wrap: wrap;
+}
+
+.toast.hidden {
+  display: none;
+}
+
+.broken-only-toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.broken-only-toggle input {
+  accent-color: var(--primary);
+}
+
+.chevron {
+  transition: transform 0.2s;
+  font-size: 10px;
+  color: var(--text-muted);
+}
+
+.chevron.open {
+  transform: rotate(90deg);
+}
+
+.confetti-canvas {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999;
+}
+
+.report-card {
+  margin-bottom: 10px;
+  border-radius: 12px;
+  overflow: hidden;
+  animation: cardIn 0.45s ease-out;
+}
+
+.report-card.hidden {
+  display: none;
+}
+
+@keyframes cardIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.report-card--success {
+  background: linear-gradient(135deg, #064e3b 0%, #047857 50%, #10b981 100%);
+  border: 1px solid rgba(16, 185, 129, 0.4);
+  color: #ecfdf5;
+  padding: 20px 16px;
+  text-align: center;
+}
+
+.report-card--issues {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  padding: 14px;
+}
+
+.report-hero-icon {
+  font-size: 40px;
+  line-height: 1;
+  margin-bottom: 8px;
+  animation: bounceIn 0.6s ease-out;
+}
+
+@keyframes bounceIn {
+  0% { transform: scale(0.5); opacity: 0; }
+  60% { transform: scale(1.1); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.report-title {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.report-subtitle {
+  font-size: 12px;
+  opacity: 0.9;
+  margin-bottom: 14px;
+  line-height: 1.5;
+}
+
+.report-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.report-stat {
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  padding: 10px 6px;
+}
+
+.report-card--issues .report-stat {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+}
+
+.report-stat-value {
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.report-stat-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  opacity: 0.85;
+  margin-top: 2px;
+}
+
+.report-card--issues .report-stat-label {
+  color: var(--text-muted);
+}
+
+.report-stat--broken .report-stat-value {
+  color: #fca5a5;
+}
+
+.report-card--issues .report-stat--broken .report-stat-value {
+  color: var(--danger);
+}
+
+.report-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 12px;
+  justify-content: center;
+}
+
+.report-meta-chip {
+  font-size: 11px;
+  padding: 3px 8px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.report-card--issues .report-meta-chip {
+  background: var(--surface-2);
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+}
+
+.report-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 12px;
+  justify-content: center;
+}
+
+.report-card--issues .report-actions {
+  justify-content: flex-start;
+}
+
+.report-health-bar {
+  margin-top: 12px;
+  height: 6px;
+  background: var(--surface-2);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.report-health-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.6s ease-out;
+}
+
+.report-health-fill--good {
+  background: linear-gradient(90deg, #16a34a, #22c55e);
+}
+
+.report-health-fill--warn {
+  background: linear-gradient(90deg, #d97706, #ef4444);
+}
+
+.report-health-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+.all-clear-banner {
+  text-align: center;
+  padding: 16px;
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+.all-clear-banner strong {
+  color: var(--success);
+  display: block;
+  font-size: 14px;
+  margin-bottom: 4px;
+}
