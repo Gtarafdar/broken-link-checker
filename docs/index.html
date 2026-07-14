@@ -10,7 +10,7 @@
   <link rel="canonical" href="https://gtarafdar.github.io/broken-link-checker/" />
   <meta property="og:title" content="Broken Link Checker — Local scan toolbox" />
   <meta property="og:description" content="Chrome side-panel tool that finds broken links on the page you’re viewing. Fully local. Free & open source." />
-  <meta property="og:image" content="https://gtarafdar.github.io/broken-link-checker/assets/shot-sidebar.png" />
+  <meta property="og:image" content="https://gtarafdar.github.io/broken-link-checker/assets/shot-welcome.png" />
   <meta property="og:type" content="website" />
   <meta name="twitter:card" content="summary_large_image" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -74,43 +74,78 @@
           </ul>
         </div>
         <div class="hero__shot reveal reveal-d1">
-          <figure>
-            <img src="assets/shot-sidebar.png" width="480" height="900" alt="Broken Link Checker side panel showing All Clear — No Broken Links after a successful page scan" />
-          </figure>
+          <button
+            type="button"
+            class="shot-open"
+            data-lightbox-src="assets/shot-welcome.png"
+            data-lightbox-alt="Broken Link Checker Welcome overview with how-to, status codes, and privacy"
+            data-lightbox-caption="Welcome — Options overview, status legend, and privacy"
+            aria-label="Open Welcome screenshot in lightbox"
+          >
+            <figure class="hero__figure">
+              <div class="hero__figure-frame">
+                <img src="assets/shot-welcome.png" width="960" height="660" alt="Broken Link Checker Welcome overview with how-to, status codes, and privacy" />
+              </div>
+              <figcaption>
+                <strong>Welcome</strong>
+                Options overview — how to use, status legend, benefits, and privacy.
+              </figcaption>
+            </figure>
+          </button>
         </div>
       </div>
     </section>
 
     <section class="workbench wrap" aria-label="Product screenshots">
       <div class="workbench__bento">
-        <figure class="shot-card shot-card--feature reveal">
-          <img src="assets/shot-welcome.png" width="1120" height="620" alt="Welcome overview screen spanning How to use, status codes, and privacy" loading="lazy" />
-          <figcaption>
-            <strong>Welcome</strong>
-            Full Options overview — how to use, status legend, benefits, and privacy.
-          </figcaption>
-        </figure>
-        <figure class="shot-card shot-card--tall reveal reveal-d1">
-          <img src="assets/shot-sidebar.png" width="400" height="760" alt="Side panel with All OK results" loading="lazy" />
-          <figcaption>
+        <button
+          type="button"
+          class="shot-open shot-card"
+          data-lightbox-src="assets/shot-sidebar.png"
+          data-lightbox-alt="Side panel with All Clear — No Broken Links"
+          data-lightbox-caption="Side panel — live results, All Clear, CSV and Sheets export"
+          aria-label="Open Side panel screenshot in lightbox"
+        >
+          <div class="shot-card__media shot-card__media--contain">
+            <img src="assets/shot-sidebar.png" width="400" height="760" alt="Side panel with All OK results" loading="lazy" />
+          </div>
+          <span class="shot-card__caption">
             <strong>Side panel</strong>
             Live scan results, All Clear celebration, CSV and Sheets export.
-          </figcaption>
-        </figure>
-        <figure class="shot-card reveal reveal-d2">
-          <img src="assets/shot-history.png" width="640" height="440" alt="Scan history with broken link detail" loading="lazy" />
-          <figcaption>
+          </span>
+        </button>
+        <button
+          type="button"
+          class="shot-open shot-card"
+          data-lightbox-src="assets/shot-history.png"
+          data-lightbox-alt="Scan history with broken link detail"
+          data-lightbox-caption="Scan history — expand rows, CSV, and copy-for-Sheets"
+          aria-label="Open Scan history screenshot in lightbox"
+        >
+          <div class="shot-card__media">
+            <img src="assets/shot-history.png" width="640" height="440" alt="Scan history with broken link detail" loading="lazy" />
+          </div>
+          <span class="shot-card__caption">
             <strong>Scan history</strong>
             Expand a row for broken-link detail, CSV, and copy-for-Sheets.
-          </figcaption>
-        </figure>
-        <figure class="shot-card reveal reveal-d3">
-          <img src="assets/shot-settings.png" width="640" height="440" alt="Settings for crawl limits and copy columns" loading="lazy" />
-          <figcaption>
+          </span>
+        </button>
+        <button
+          type="button"
+          class="shot-open shot-card"
+          data-lightbox-src="assets/shot-settings.png"
+          data-lightbox-alt="Settings for crawl limits and copy columns"
+          data-lightbox-caption="Settings — crawl limits, resource types, export columns"
+          aria-label="Open Settings screenshot in lightbox"
+        >
+          <div class="shot-card__media">
+            <img src="assets/shot-settings.png" width="640" height="440" alt="Settings for crawl limits and copy columns" loading="lazy" />
+          </div>
+          <span class="shot-card__caption">
             <strong>Settings</strong>
             Crawl limits, resource types, and a live preview of your export columns.
-          </figcaption>
-        </figure>
+          </span>
+        </button>
       </div>
     </section>
 
@@ -305,5 +340,23 @@
       </nav>
     </div>
   </footer>
+
+  <div
+    class="lightbox"
+    id="lightbox"
+    hidden
+    role="dialog"
+    aria-modal="true"
+    aria-label="Screenshot preview"
+  >
+    <button type="button" class="lightbox__backdrop" data-lightbox-close aria-label="Close lightbox"></button>
+    <div class="lightbox__panel">
+      <button type="button" class="lightbox__close" data-lightbox-close aria-label="Close">×</button>
+      <img class="lightbox__img" src="" alt="" />
+      <p class="lightbox__caption"></p>
+    </div>
+  </div>
+
+  <script src="lightbox.js" defer></script>
 </body>
 </html>

@@ -332,7 +332,19 @@ a:hover {
   position: relative;
 }
 
-.hero__shot figure {
+.shot-open {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: zoom-in;
+}
+
+.hero__figure {
   margin: 0;
   border-radius: var(--radius);
   overflow: hidden;
@@ -340,34 +352,46 @@ a:hover {
   box-shadow:
     0 0 0 1px rgba(255, 255, 255, 0.06),
     0 28px 60px rgba(11, 18, 25, 0.28);
-  transform: perspective(1200px) rotateY(-4deg) rotateX(2deg);
-  transition: transform 0.6s var(--ease);
+  transform: perspective(1200px) rotateY(-5deg) rotateX(2.5deg);
+  transition: transform 0.6s var(--ease), box-shadow 0.6s var(--ease);
 }
 
-.hero__shot:hover figure {
-  transform: perspective(1200px) rotateY(-1deg) rotateX(0deg);
+.hero__shot:hover .hero__figure,
+.hero__shot:focus-within .hero__figure {
+  transform: perspective(1200px) rotateY(-1deg) rotateX(0deg) translateY(-4px);
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.1),
+    0 32px 64px rgba(11, 18, 25, 0.34);
 }
 
-.hero__shot img {
-  width: 100%;
-  max-height: min(68vh, 640px);
-  aspect-ratio: 9 / 16;
-  object-fit: cover;
-  object-position: top center;
+.hero__figure-frame {
   background: var(--desk);
 }
 
-.hero__shot figcaption {
-  position: absolute;
-  bottom: 1rem;
-  left: 1rem;
-  right: 1rem;
-  font-size: 0.78rem;
-  color: rgba(255, 255, 255, 0.72);
-  pointer-events: none;
+.hero__figure-frame img {
+  width: 100%;
+  aspect-ratio: 16 / 11;
+  object-fit: cover;
+  object-position: top left;
+  display: block;
 }
 
-/* —— Workbench rail of shots —— */
+.hero__figure figcaption {
+  padding: 0.85rem 1rem 1rem;
+  font-size: 0.88rem;
+  color: #c5d0dc;
+  background: var(--desk-panel);
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.hero__figure figcaption strong {
+  display: block;
+  color: #fff;
+  font-size: 0.95rem;
+  margin-bottom: 0.2rem;
+}
+
+/* —— Workbench bento (3 equal cards) —— */
 .workbench {
   padding: 1rem 0 3rem;
 }
@@ -386,54 +410,148 @@ a:hover {
   background: var(--desk-panel);
   border: 1px solid rgba(255, 255, 255, 0.06);
   box-shadow: 0 16px 36px rgba(11, 18, 25, 0.16);
-  transition: transform 0.35s var(--ease);
+  transition: transform 0.35s var(--ease), box-shadow 0.35s var(--ease);
   display: flex;
   flex-direction: column;
   min-width: 0;
+  height: 100%;
 }
 
-.shot-card:hover {
+.shot-card:hover,
+.shot-card:focus-visible {
   transform: translateY(-4px);
+  box-shadow: 0 20px 40px rgba(11, 18, 25, 0.22);
+  outline: none;
 }
 
-.shot-card--feature {
-  grid-column: 1 / -1;
+.shot-card:focus-visible {
+  box-shadow:
+    0 0 0 2px var(--paper),
+    0 0 0 4px var(--accent),
+    0 20px 40px rgba(11, 18, 25, 0.22);
 }
 
-.shot-card img {
-  width: 100%;
+.shot-card__media {
+  background: var(--desk);
   aspect-ratio: 16 / 11;
-  object-fit: cover;
-  object-position: top left;
+  overflow: hidden;
   flex: 1;
 }
 
-.shot-card--feature img {
-  aspect-ratio: 21 / 10;
-  max-height: 420px;
-  object-position: top center;
+.shot-card__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top left;
+  display: block;
 }
 
-.shot-card--tall img {
-  aspect-ratio: 9 / 14;
-  max-height: 340px;
-  object-position: top center;
-  margin: 0 auto;
+.shot-card__media--contain {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.65rem 0.65rem 0;
+}
+
+.shot-card__media--contain img {
   width: auto;
+  height: 100%;
   max-width: 100%;
+  object-fit: contain;
+  object-position: center top;
 }
 
-.shot-card figcaption {
+.shot-card__caption {
+  display: block;
   padding: 0.85rem 1rem 1rem;
   color: #c5d0dc;
   font-size: 0.88rem;
+  line-height: 1.45;
 }
 
-.shot-card figcaption strong {
+.shot-card__caption strong {
   display: block;
   color: #fff;
   font-size: 0.95rem;
   margin-bottom: 0.2rem;
+}
+
+/* —— Lightbox —— */
+body.lightbox-open {
+  overflow: hidden;
+}
+
+.lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: grid;
+  place-items: center;
+  padding: 1.25rem;
+}
+
+.lightbox[hidden] {
+  display: none;
+}
+
+.lightbox__backdrop {
+  position: absolute;
+  inset: 0;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  background: rgba(8, 12, 18, 0.82);
+  cursor: zoom-out;
+}
+
+.lightbox__panel {
+  position: relative;
+  z-index: 1;
+  max-width: min(1100px, 96vw);
+  max-height: calc(100vh - 2.5rem);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.lightbox__img {
+  max-width: 100%;
+  max-height: calc(100vh - 6rem);
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  border-radius: 12px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
+  background: var(--desk);
+}
+
+.lightbox__caption {
+  margin: 0;
+  color: #d7dee8;
+  font-size: 0.92rem;
+  text-align: center;
+  max-width: 40rem;
+}
+
+.lightbox__close {
+  position: absolute;
+  top: -0.35rem;
+  right: -0.35rem;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: var(--ink);
+  color: #fff;
+  font-size: 1.35rem;
+  line-height: 1;
+  cursor: pointer;
+  z-index: 2;
+}
+
+.lightbox__close:hover {
+  background: var(--ink-soft);
 }
 
 /* —— Install —— */
@@ -749,23 +867,13 @@ a:hover {
     grid-template-columns: 1fr 1fr;
   }
 
-  .shot-card--feature {
-    grid-column: 1 / -1;
-  }
-
-  .shot-card--tall {
-    grid-column: 1 / -1;
-    max-width: 280px;
-    justify-self: center;
+  .hero__shot {
+    max-width: 560px;
+    margin: 0 auto;
     width: 100%;
   }
 
-  .hero__shot {
-    max-width: 360px;
-    margin: 0 auto;
-  }
-
-  .hero__shot figure {
+  .hero__figure {
     transform: none;
   }
 
@@ -792,10 +900,6 @@ a:hover {
     grid-template-columns: 1fr;
   }
 
-  .shot-card--tall {
-    max-width: 260px;
-  }
-
   .install {
     margin: 0;
     border-radius: 0;
@@ -804,5 +908,11 @@ a:hover {
   .support {
     margin: 0;
     border-radius: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero__figure {
+    transform: none;
   }
 }
