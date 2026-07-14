@@ -79,9 +79,9 @@
         "applicationCategory": "BrowserApplication",
         "applicationSubCategory": "SEO / Link Checker",
         "operatingSystem": "Chrome",
-        "softwareVersion": "1.1.0",
+        "softwareVersion": "1.1.1",
         "url": "https://gtarafdar.github.io/broken-link-checker/",
-        "downloadUrl": "https://gtarafdar.github.io/broken-link-checker/download/broken-link-checker-v1.1.0.zip",
+        "downloadUrl": "https://gtarafdar.github.io/broken-link-checker/download/broken-link-checker-v1.1.1.zip",
         "installUrl": "https://gtarafdar.github.io/broken-link-checker/#install",
         "screenshot": [
           "https://gtarafdar.github.io/broken-link-checker/assets/shot-welcome.png",
@@ -147,7 +147,7 @@
             "name": "Why do I see HTTP 429 instead of broken?",
             "acceptedAnswer": {
               "@type": "Answer",
-              "text": "Many sites rate-limit aggressive checkers. The extension throttles requests and treats 429 and some 503 responses as rate-limited, not the same as a dead 404. Retry later or lower concurrency in Settings."
+              "text": "The extension backs off on 429/503, respects Retry-After, and runs a slow auto-retry pass at the end of each scan so most busy responses become OK or truly broken. Leftovers stay unverified (not broken). Lower concurrency or use Recheck unverified if needed."
             }
           },
           {
@@ -251,8 +251,8 @@
             no account, no API keys, no cloud crawl.
           </p>
           <div class="hero__actions" id="download">
-            <a class="btn btn--accent" href="download/broken-link-checker-v1.1.0.zip" download>
-              Download v1.1.0 · ZIP
+            <a class="btn btn--accent" href="download/broken-link-checker-v1.1.1.zip" download>
+              Download v1.1.1 · ZIP
             </a>
             <a class="btn btn--ghost" href="https://github.com/Gtarafdar/broken-link-checker" rel="noopener">
               View source
@@ -417,7 +417,7 @@
           <li>
             <div>
               <strong>Download the package</strong>
-              Grab <code>broken-link-checker-v1.1.0.zip</code> from this page or the
+              Grab <code>broken-link-checker-v1.1.1.zip</code> from this page or the
               <a href="https://github.com/Gtarafdar/broken-link-checker/releases" rel="noopener">GitHub Releases</a> tab.
             </div>
           </li>
@@ -448,7 +448,7 @@
           </li>
         </ol>
         <div class="install__actions">
-          <a class="btn btn--accent" href="download/broken-link-checker-v1.1.0.zip" download>Download ZIP package</a>
+          <a class="btn btn--accent" href="download/broken-link-checker-v1.1.1.zip" download>Download ZIP package</a>
           <a class="btn btn--ghost" href="https://github.com/Gtarafdar/broken-link-checker#how-to-install" rel="noopener" style="border-color:rgba(255,255,255,.2);color:#fff">README install notes</a>
         </div>
       </div>
@@ -464,7 +464,7 @@
         </details>
         <details>
           <summary>Why do I see 429 instead of “broken”?</summary>
-          <p>Many sites rate-limit aggressive checkers. The tool throttles requests and treats 429 / some 503 responses as rate-limited — not the same as a dead 404. Retry later or lower concurrency in Settings.</p>
+          <p>The extension backs off on 429/503, respects Retry-After, and runs a slow auto-retry pass so most busy responses become OK or truly broken. Leftovers stay unverified (not broken). Lower concurrency in Settings or use Recheck unverified.</p>
         </details>
         <details>
           <summary>Can I scan a large site in batches?</summary>
@@ -561,7 +561,7 @@
         <a href="#faq">FAQ</a>
         <a href="#support">Support</a>
         <a href="https://github.com/Gtarafdar/broken-link-checker" rel="noopener">GitHub</a>
-        <a href="download/broken-link-checker-v1.1.0.zip" download>Download</a>
+        <a href="download/broken-link-checker-v1.1.1.zip" download>Download</a>
       </nav>
     </div>
   </footer>

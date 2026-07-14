@@ -13,7 +13,7 @@
   <a href="https://gtarafdar.github.io/broken-link-checker/"><img src="https://img.shields.io/badge/Landing-GitHub%20Pages-1f6feb?style=flat-square" alt="Landing page" /></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-0d8f6b?style=flat-square" alt="MIT License" /></a>
   <a href="PRIVACY.md"><img src="https://img.shields.io/badge/Privacy-Local%20only-5a6b7c?style=flat-square" alt="Privacy" /></a>
-  <a href="https://github.com/Gtarafdar/broken-link-checker/releases"><img src="https://img.shields.io/badge/Download-ZIP%20v1.1.0-e8462f?style=flat-square" alt="Download" /></a>
+  <a href="https://github.com/Gtarafdar/broken-link-checker/releases"><img src="https://img.shields.io/badge/Download-ZIP%20v1.1.1-e8462f?style=flat-square" alt="Download" /></a>
   <a href="https://github.com/sponsors/Gtarafdar"><img src="https://img.shields.io/badge/Support-Donate-ea4aaa?style=flat-square&logo=githubsponsors" alt="Donate" /></a>
   <a href="https://github.com/Gtarafdar/broken-link-checker/stargazers"><img src="https://img.shields.io/github/stars/Gtarafdar/broken-link-checker?style=flat-square" alt="GitHub stars" /></a>
 </p>
@@ -61,7 +61,7 @@ Most link checkers want an account, a crawl budget, or a cloud upload. Broken Li
 
 | Package | Size | Notes |
 | --- | --- | --- |
-| [broken-link-checker-v1.1.0.zip](https://gtarafdar.github.io/broken-link-checker/download/broken-link-checker-v1.1.0.zip) | ≈ 65 KB | Unzip → Load unpacked in Chrome |
+| [broken-link-checker-v1.1.1.zip](https://gtarafdar.github.io/broken-link-checker/download/broken-link-checker-v1.1.1.zip) | ≈ 65 KB | Unzip → Load unpacked in Chrome |
 | [GitHub Releases](https://github.com/Gtarafdar/broken-link-checker/releases) | — | Preferred once a release is published |
 
 Or clone this repo and load the project root (the folder that contains `manifest.json`).

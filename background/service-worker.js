@@ -135,17 +135,94 @@ async function processPage(scanId, pageData, settings, tabId) {
   return { page, linkRecords, brokenCount: broken.length };
 }
 
+function makeChecker(settings) {
+  return new LinkChecker({
+    concurrency: settings.concurrency || 3,
+    perHostDelay: settings.perHostDelay || 500,
+    timeout: settings.timeout || 12000,
+    rateLimitRetries: settings.rateLimitRetries ?? 8
+  });
+}
+
+async function resolveRateLimitedForScan(scanId, settings) {
+  if (settings.autoRetryRateLimited === false) return 0;
+  if (!checker || abortController?.signal?.aborted) return 0;
+
+  const details = await getScanWithDetails(scanId);
+  if (!details?.links?.length) return 0;
+
+  const limited = details.links.filter((l) => l.status === 'rate_limited');
+  if (!limited.length) return 0;
+
+  broadcast({
+    type: MSG.SCAN_PROGRESS,
+    scanId,
+    progress: {
+      phase: 'resolving',
+      checked: 0,
+      total: limited.length,
+      pagesScanned: details.pages?.length || 0,
+      totalPages: details.pages?.length || 0
+    }
+  });
+
+  // Brief cool-down so the host can recover before the slow pass
+  await new Promise((r) => setTimeout(r, 1500));
+
+  const results = await checker.resolveRateLimited(
+    limited.map((l) => ({
+      href: l.href,
+      checkType: l.checkType || 'http',
+      hash: l.hash
+    })),
+    (progress) => {
+      broadcast({
+        type: MSG.SCAN_PROGRESS,
+        scanId,
+        progress: {
+          phase: 'resolving',
+          checked: progress.completed,
+          total: progress.total,
+          currentUrl: progress.url,
+          pagesScanned: details.pages?.length || 0,
+          totalPages: details.pages?.length || 0
+        }
+      });
+    },
+    abortController?.signal
+  );
+
+  let resolved = 0;
+  for (const link of limited) {
+    if (abortController?.signal?.aborted) break;
+    const key = link.checkType === 'hash' ? `hash:${link.href}` : (() => {
+      try {
+        const u = new URL(link.href);
+        u.hash = '';
+        return u.href;
+      } catch {
+        return link.href;
+      }
+    })();
+    const result = results.get(key) || results.get(link.href);
+    if (!result) continue;
+    link.statusCode = result.statusCode;
+    link.status = result.status;
+    link.error = result.error;
+    link.checkedAt = result.checkedAt || Date.now();
+    await updateLink(link);
+    if (result.status !== 'rate_limited') resolved++;
+  }
+  return resolved;
+}
+
 async function runPageScan(tab, mode, categoryOptions, existingScanId) {
   const settings = await getSettings();
   const scanId = existingScanId || uuid();
   const startUrl = tab.url;
 
   abortController = new AbortController();
-  checker = new LinkChecker({
-    concurrency: settings.concurrency,
-    perHostDelay: settings.perHostDelay,
-    timeout: settings.timeout
-  });
+  checker = makeChecker(settings);
 
   activeScan = {
     id: scanId,
@@ -194,7 +271,14 @@ async function runPageScan(tab, mode, categoryOptions, existingScanId) {
       };
 
       const { linkRecords, brokenCount } = await processPage(scanId, pageData, settings, tab.id);
-      scan.stats = { pages: 1, links: linkRecords.length, broken: brokenCount };
+      await resolveRateLimitedForScan(scanId, settings);
+      const after = await getScanWithDetails(scanId);
+      const brokenAfter = (after?.links || []).filter(isBroken).length;
+      scan.stats = {
+        pages: 1,
+        links: after?.links?.length || linkRecords.length,
+        broken: brokenAfter || brokenCount
+      };
       scan.status = 'completed';
       scan.completedAt = Date.now();
       await updateScan(scan);
@@ -454,7 +538,12 @@ async function runPageScan(tab, mode, categoryOptions, existingScanId) {
         });
       }
 
-      scan.stats = { pages: crawledPages.length, links: totalLinks, broken: totalBroken };
+      await resolveRateLimitedForScan(scanId, settings);
+      const after = await getScanWithDetails(scanId);
+      const brokenAfter = (after?.links || []).filter(isBroken).length;
+      const linksAfter = after?.links?.length || totalLinks;
+
+      scan.stats = { pages: crawledPages.length, links: linksAfter, broken: brokenAfter };
       scan.status = abortController.signal.aborted ? 'cancelled' : 'completed';
       scan.completedAt = Date.now();
       await updateScan(scan);
@@ -462,7 +551,7 @@ async function runPageScan(tab, mode, categoryOptions, existingScanId) {
       try {
         const [activeTab] = await chrome.tabs.query({ active: true, currentWindow: true });
         if (activeTab?.id && activeTab.url) {
-          const details = await getScanWithDetails(scanId);
+          const details = after || await getScanWithDetails(scanId);
           const matchPage = details.pages.find((p) => p.url === activeTab.url);
           if (matchPage) {
             const pageLinks = details.linksByPage[matchPage.id] || [];
@@ -495,11 +584,7 @@ async function recheckPage(scanId, pageId, tabId) {
   if (!page) return;
 
   const settings = await getSettings();
-  checker = new LinkChecker({
-    concurrency: settings.concurrency,
-    perHostDelay: settings.perHostDelay,
-    timeout: settings.timeout
-  });
+  checker = makeChecker(settings);
   const pageLinks = details.linksByPage[pageId] || [];
 
   let html, extracted;
@@ -540,11 +625,7 @@ async function recheckLink(scanId, linkId) {
   if (!link) return;
 
   const settings = await getSettings();
-  checker = new LinkChecker({
-    concurrency: settings.concurrency,
-    perHostDelay: settings.perHostDelay,
-    timeout: settings.timeout
-  });
+  checker = makeChecker(settings);
   const result = await checker.checkUrl(link.href, null, {
     checkType: link.checkType || 'http',
     hash: link.hash,
@@ -598,6 +679,26 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
       case MSG.RECHECK_LINK: {
         await recheckLink(msg.scanId, msg.linkId);
         sendResponse({ ok: true });
+        break;
+      }
+      case MSG.RECHECK_RATE_LIMITED: {
+        const settings = await getSettings();
+        abortController = new AbortController();
+        checker = makeChecker(settings);
+        const resolved = await resolveRateLimitedForScan(msg.scanId, { ...settings, autoRetryRateLimited: true });
+        const details = await getScanWithDetails(msg.scanId);
+        if (details?.scan) {
+          details.scan.stats = {
+            pages: details.pages.length,
+            links: details.links.length,
+            broken: details.links.filter(isBroken).length
+          };
+          await updateScan(details.scan);
+          broadcast({ type: MSG.SCAN_COMPLETE, scanId: msg.scanId, scan: details.scan, recheck: true });
+        }
+        sendResponse({ ok: true, resolved });
+        abortController = null;
+        checker = null;
         break;
       }
       case MSG.CLEAR_MARKERS: {

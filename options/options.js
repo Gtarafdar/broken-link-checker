@@ -109,6 +109,8 @@ async function loadSettings() {
   $('#maxPages').value = s.maxPages;
   $('#concurrency').value = s.concurrency;
   $('#maxLinks').value = s.maxLinksPerPage;
+  $('#perHostDelay').value = s.perHostDelay ?? 500;
+  $('#autoRetryRateLimited').checked = s.autoRetryRateLimited !== false;
   $('#skipScannedPages').checked = s.skipScannedPages !== false;
   $('#batchPick').value = s.batchPick === 'random' ? 'random' : 'bfs';
   $('#checkAnchors').checked = s.linkTypes?.anchors !== false;
@@ -139,6 +141,8 @@ async function saveSettings() {
     maxPages: parseInt($('#maxPages').value, 10) || 50,
     concurrency: parseInt($('#concurrency').value, 10) || 3,
     maxLinksPerPage: parseInt($('#maxLinks').value, 10) || 500,
+    perHostDelay: parseInt($('#perHostDelay').value, 10) || 500,
+    autoRetryRateLimited: $('#autoRetryRateLimited').checked,
     skipScannedPages: $('#skipScannedPages').checked,
     batchPick: $('#batchPick').value === 'random' ? 'random' : 'bfs',
     linkTypes: {

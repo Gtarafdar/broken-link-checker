@@ -122,12 +122,18 @@ function renderReportCard(stats) {
         <span class="report-meta-chip">${escapeHtml(stats.domain)}</span>
         <span class="report-meta-chip">${escapeHtml(modeLabel)}</span>
       </div>
+      ${stats.rateLimited > 0 ? `
+      <div class="report-unverified report-unverified--on-success">
+        <span>${stats.rateLimited} still unverified (server busy). Not counted as broken.</span>
+        <button type="button" class="btn btn-sm btn-secondary" id="recheckRateLimited">Recheck unverified</button>
+      </div>` : ''}
     `;
 
     if (currentScanId && lastConfettiScanId !== currentScanId) {
       lastConfettiScanId = currentScanId;
       setTimeout(fireConfetti, 200);
     }
+    bindRecheckUnverified();
     return;
   }
 
@@ -159,8 +165,13 @@ function renderReportCard(stats) {
     </div>
     <div class="report-health-label">
       <span>${stats.healthPct}% healthy</span>
-      <span>${stats.pages} page${stats.pages !== 1 ? 's' : ''}${stats.rateLimited ? ` · ${stats.rateLimited} rate-limited` : ''}</span>
+      <span>${stats.pages} page${stats.pages !== 1 ? 's' : ''}</span>
     </div>
+    ${stats.rateLimited > 0 ? `
+    <div class="report-unverified">
+      <span>${stats.rateLimited} still unverified (server busy). Not counted as broken.</span>
+      <button type="button" class="btn btn-sm btn-secondary" id="recheckRateLimited">Recheck unverified</button>
+    </div>` : ''}
     <div class="report-meta">
       <span class="report-meta-chip">${escapeHtml(stats.domain)}</span>
       <span class="report-meta-chip">${escapeHtml(modeLabel)}</span>
@@ -196,6 +207,27 @@ function renderReportCard(stats) {
 
   card.querySelector('#cardExportCsv')?.addEventListener('click', () => {
     $('#exportCsv')?.click();
+  });
+
+  bindRecheckUnverified();
+}
+
+function bindRecheckUnverified() {
+  const btn = $('#recheckRateLimited');
+  if (!btn || !currentScanId) return;
+  btn.addEventListener('click', async () => {
+    btn.disabled = true;
+    showToast('Rechecking unverified links slowly…');
+    setScanning(true);
+    try {
+      await chrome.runtime.sendMessage({
+        type: MSG.RECHECK_RATE_LIMITED,
+        scanId: currentScanId
+      });
+    } catch (err) {
+      showToast(err.message || 'Recheck failed');
+      setScanning(false);
+    }
   });
 }
 
@@ -276,6 +308,12 @@ function updateProgress(progress) {
     detail = batchSkip > 0
       ? `Skipping ${batchSkip} pages already in History for this domain. This batch only adds new pages.`
       : 'Whole-domain crawl finds pages first, then checks every unique link. You can Cancel anytime.';
+  } else if (phase === 'resolving') {
+    text = total > 0
+      ? `Clearing rate limits: ${checked} / ${total}`
+      : 'Clearing rate limits…';
+    pct = total > 0 ? Math.max(5, (checked / total) * 100) : 60;
+    detail = 'Slow retry pass so busy-server responses become OK or truly broken.';
   } else if (totalPages > 1 && pagesScanned) {
     text = `Checking page ${pagesScanned} / ${totalPages}`;
     if (total > 0) text += ` · ~${checked}/${total} unique URLs`;

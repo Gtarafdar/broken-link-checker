@@ -133,7 +133,7 @@
                 <tbody>
                   <tr><td><span class="badge badge-ok">2xx / 3xx</span></td><td>Reachable (redirects counted healthy after follow).</td></tr>
                   <tr><td><span class="badge badge-broken">4xx / 5xx</span></td><td>Broken or server error for that URL.</td></tr>
-                  <tr><td><span class="badge badge-warning">429 / 503</span></td><td>Rate limited — retried; not treated as a permanent broken link if resolved.</td></tr>
+                  <tr><td><span class="badge badge-warning">429 / 503</span></td><td>Busy server — retried with backoff + slow end pass. Remaining ones are “unverified,” not broken.</td></tr>
                   <tr><td><span class="badge badge-warning">timeout</span></td><td>No response within the timeout window.</td></tr>
                   <tr><td><span class="badge badge-broken">error</span></td><td>Network failure or unusable response.</td></tr>
                   <tr><td><span class="badge badge-ok">hash OK</span></td><td>On-page fragment target found in the DOM.</td></tr>
@@ -279,11 +279,26 @@
               </div>
               <div>
                 <label class="label" for="concurrency">Concurrent checks</label>
-                <input id="concurrency" class="input" type="number" min="2" max="10" value="3">
+                <input id="concurrency" class="input" type="number" min="1" max="10" value="3">
+                <p class="field-hint">Lower this (1–2) if a site rate-limits during domain scans.</p>
+              </div>
+              <div>
+                <label class="label" for="perHostDelay">Delay between requests (ms)</label>
+                <input id="perHostDelay" class="input" type="number" min="200" max="5000" step="50" value="500">
+                <p class="field-hint">Per-host pause. Auto-increases when 429/503 is seen.</p>
               </div>
               <div>
                 <label class="label" for="maxLinks">Max links per page</label>
                 <input id="maxLinks" class="input" type="number" min="100" max="1000" value="500">
+              </div>
+              <div class="checkbox-group" style="grid-column: 1 / -1">
+                <label>
+                  <input type="checkbox" id="autoRetryRateLimited" checked>
+                  Auto-retry rate-limited links (slow pass at end of scan)
+                </label>
+                <p class="field-hint" style="margin:0.35rem 0 0">
+                  Clears most 429/503 noise so results show real OK or broken. Remaining unverified links stay out of the broken count.
+                </p>
               </div>
               <div class="checkbox-group">
                 <span class="label">Resource types</span>
