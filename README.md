@@ -38,6 +38,10 @@ Most link checkers want an account, a crawl budget, or a cloud upload. Broken Li
 
 ## Screenshots
 
+<p align="center">
+  <img src="docs/assets/shot-sidebar.png" width="320" alt="Side panel — All Clear, no broken links" />
+</p>
+
 | Welcome | History | Settings |
 | :---: | :---: | :---: |
 | ![Welcome overview](docs/assets/shot-welcome.png) | ![Scan history](docs/assets/shot-history.png) | ![Settings](docs/assets/shot-settings.png) |
