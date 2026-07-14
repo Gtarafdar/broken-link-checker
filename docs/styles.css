@@ -372,9 +372,9 @@ a:hover {
   padding: 1rem 0 3rem;
 }
 
-.workbench__rail {
+.workbench__bento {
   display: grid;
-  grid-template-columns: minmax(0, 0.85fr) repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 1rem;
   align-items: stretch;
 }
@@ -387,10 +387,17 @@ a:hover {
   border: 1px solid rgba(255, 255, 255, 0.06);
   box-shadow: 0 16px 36px rgba(11, 18, 25, 0.16);
   transition: transform 0.35s var(--ease);
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
 }
 
 .shot-card:hover {
   transform: translateY(-4px);
+}
+
+.shot-card--feature {
+  grid-column: 1 / -1;
 }
 
 .shot-card img {
@@ -398,13 +405,22 @@ a:hover {
   aspect-ratio: 16 / 11;
   object-fit: cover;
   object-position: top left;
+  flex: 1;
+}
+
+.shot-card--feature img {
+  aspect-ratio: 21 / 10;
+  max-height: 420px;
+  object-position: top center;
 }
 
 .shot-card--tall img {
-  aspect-ratio: 9 / 16;
-  max-height: 420px;
-  margin: 0 auto;
+  aspect-ratio: 9 / 14;
+  max-height: 340px;
   object-position: top center;
+  margin: 0 auto;
+  width: auto;
+  max-width: 100%;
 }
 
 .shot-card figcaption {
@@ -725,18 +741,21 @@ a:hover {
   .hero__grid,
   .support__grid,
   .about,
-  .workbench__rail,
   .features {
     grid-template-columns: 1fr;
   }
 
-  .workbench__rail {
+  .workbench__bento {
     grid-template-columns: 1fr 1fr;
+  }
+
+  .shot-card--feature {
+    grid-column: 1 / -1;
   }
 
   .shot-card--tall {
     grid-column: 1 / -1;
-    max-width: 320px;
+    max-width: 280px;
     justify-self: center;
     width: 100%;
   }
@@ -769,8 +788,12 @@ a:hover {
     grid-template-columns: 1fr;
   }
 
-  .workbench__rail {
+  .workbench__bento {
     grid-template-columns: 1fr;
+  }
+
+  .shot-card--tall {
+    max-width: 260px;
   }
 
   .install {
