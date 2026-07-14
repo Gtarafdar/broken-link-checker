@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://gtarafdar.github.io/broken-link-checker/sitemap.xml

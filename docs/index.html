@@ -3,20 +3,214 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Broken Link Checker — Local scan toolbox for Chrome</title>
-  <meta name="description" content="Find broken links without leaving the page. A free, privacy-first Chrome side-panel extension. Scan locally, store results in IndexedDB, export to Sheets or Excel. No account. No API keys." />
+  <title>Broken Link Checker — Free Chrome Extension to Find Dead Links Locally</title>
+  <meta name="description" content="Free, privacy-first Chrome extension that finds broken links without leaving the page. Side-panel scans, local IndexedDB history, CSV and Google Sheets export. No account, no API keys, MIT open source." />
+  <meta name="keywords" content="broken link checker, dead link checker, Chrome extension, link checker, SEO tool, privacy-first, CSV export, Google Sheets, Manifest V3, open source" />
+  <meta name="author" content="Gobinda Tarafdar" />
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+  <meta name="googlebot" content="index, follow, max-image-preview:large, max-snippet:-1" />
   <meta name="theme-color" content="#0b1219" />
-  <link rel="icon" href="assets/icon48.png" type="image/png" />
+  <meta name="color-scheme" content="light" />
   <link rel="canonical" href="https://gtarafdar.github.io/broken-link-checker/" />
-  <meta property="og:title" content="Broken Link Checker — Local scan toolbox" />
-  <meta property="og:description" content="Chrome side-panel tool that finds broken links on the page you’re viewing. Fully local. Free & open source." />
-  <meta property="og:image" content="https://gtarafdar.github.io/broken-link-checker/assets/shot-welcome.png" />
+  <link rel="icon" href="assets/icon48.png" type="image/png" sizes="48x48" />
+  <link rel="icon" href="assets/icon128.png" type="image/png" sizes="128x128" />
+  <link rel="apple-touch-icon" href="assets/icon128.png" />
+
+  <!-- Open Graph -->
   <meta property="og:type" content="website" />
+  <meta property="og:locale" content="en_US" />
+  <meta property="og:site_name" content="Broken Link Checker" />
+  <meta property="og:url" content="https://gtarafdar.github.io/broken-link-checker/" />
+  <meta property="og:title" content="Broken Link Checker — Find Dead Links Without Leaving the Page" />
+  <meta property="og:description" content="Free Chrome side-panel toolbox for broken links. Fully local, no account, export to Sheets or Excel. MIT open source by Gobinda Tarafdar." />
+  <meta property="og:image" content="https://gtarafdar.github.io/broken-link-checker/assets/shot-welcome.png" />
+  <meta property="og:image:secure_url" content="https://gtarafdar.github.io/broken-link-checker/assets/shot-welcome.png" />
+  <meta property="og:image:type" content="image/png" />
+  <meta property="og:image:width" content="1024" />
+  <meta property="og:image:height" content="787" />
+  <meta property="og:image:alt" content="Broken Link Checker Welcome screen showing how to use, status codes, and privacy overview" />
+
+  <!-- Twitter / X -->
   <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:site" content="@gtarafdarr" />
+  <meta name="twitter:creator" content="@gtarafdarr" />
+  <meta name="twitter:title" content="Broken Link Checker — Find Dead Links Without Leaving the Page" />
+  <meta name="twitter:description" content="Free Chrome side-panel toolbox for broken links. Fully local, no account, export to Sheets or Excel." />
+  <meta name="twitter:image" content="https://gtarafdar.github.io/broken-link-checker/assets/shot-welcome.png" />
+  <meta name="twitter:image:alt" content="Broken Link Checker Welcome screen overview" />
+
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,620&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebSite",
+        "@id": "https://gtarafdar.github.io/broken-link-checker/#website",
+        "url": "https://gtarafdar.github.io/broken-link-checker/",
+        "name": "Broken Link Checker",
+        "description": "Free, privacy-first Chrome extension to find broken links locally.",
+        "publisher": { "@id": "https://gtarafdar.github.io/broken-link-checker/#person" },
+        "inLanguage": "en-US"
+      },
+      {
+        "@type": "WebPage",
+        "@id": "https://gtarafdar.github.io/broken-link-checker/#webpage",
+        "url": "https://gtarafdar.github.io/broken-link-checker/",
+        "name": "Broken Link Checker — Free Chrome Extension to Find Dead Links Locally",
+        "isPartOf": { "@id": "https://gtarafdar.github.io/broken-link-checker/#website" },
+        "about": { "@id": "https://gtarafdar.github.io/broken-link-checker/#software" },
+        "description": "Free, privacy-first Chrome extension that finds broken links without leaving the page. Side-panel scans, local history, CSV and Sheets export.",
+        "primaryImageOfPage": {
+          "@type": "ImageObject",
+          "url": "https://gtarafdar.github.io/broken-link-checker/assets/shot-welcome.png"
+        },
+        "inLanguage": "en-US"
+      },
+      {
+        "@type": "SoftwareApplication",
+        "@id": "https://gtarafdar.github.io/broken-link-checker/#software",
+        "name": "Broken Link Checker",
+        "alternateName": "Broken Link Checker Local scan toolbox",
+        "applicationCategory": "BrowserApplication",
+        "applicationSubCategory": "SEO / Link Checker",
+        "operatingSystem": "Chrome",
+        "softwareVersion": "1.0.0",
+        "url": "https://gtarafdar.github.io/broken-link-checker/",
+        "downloadUrl": "https://gtarafdar.github.io/broken-link-checker/download/broken-link-checker-v1.0.0.zip",
+        "installUrl": "https://gtarafdar.github.io/broken-link-checker/#install",
+        "screenshot": [
+          "https://gtarafdar.github.io/broken-link-checker/assets/shot-welcome.png",
+          "https://gtarafdar.github.io/broken-link-checker/assets/shot-sidebar.png",
+          "https://gtarafdar.github.io/broken-link-checker/assets/shot-history.png",
+          "https://gtarafdar.github.io/broken-link-checker/assets/shot-settings.png"
+        ],
+        "image": "https://gtarafdar.github.io/broken-link-checker/assets/icon128.png",
+        "description": "A lightweight Chrome side-panel toolbox that checks HTTP links on the page you are viewing, stores results in IndexedDB on this device only, and exports tables for Sheets or Excel — no account and no API keys.",
+        "license": "https://github.com/Gtarafdar/broken-link-checker/blob/main/LICENSE",
+        "codeRepository": "https://github.com/Gtarafdar/broken-link-checker",
+        "isAccessibleForFree": true,
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD"
+        },
+        "author": { "@id": "https://gtarafdar.github.io/broken-link-checker/#person" },
+        "publisher": { "@id": "https://gtarafdar.github.io/broken-link-checker/#person" },
+        "featureList": [
+          "Current page and bounded domain crawl",
+          "Side panel live results with page markers",
+          "Local IndexedDB scan history",
+          "CSV and Google Sheets / Excel copy export",
+          "Throttled checks with honest 429 handling",
+          "No account, analytics, or cloud backend"
+        ]
+      },
+      {
+        "@type": "Person",
+        "@id": "https://gtarafdar.github.io/broken-link-checker/#person",
+        "name": "Gobinda Tarafdar",
+        "url": "https://gtarafdar.com",
+        "image": "https://gtarafdar.github.io/broken-link-checker/assets/gobinda.jpg",
+        "jobTitle": "Product Marketing Specialist",
+        "worksFor": {
+          "@type": "Organization",
+          "name": "WPBakery",
+          "url": "https://wpbakery.com/"
+        },
+        "sameAs": [
+          "https://github.com/Gtarafdar/",
+          "https://x.com/gtarafdarr",
+          "https://gtarafdar.com",
+          "https://gtarafdar.github.io/slack-agent-bridge/"
+        ],
+        "email": "mailto:gobinda.ext1@gmail.com"
+      },
+      {
+        "@type": "FAQPage",
+        "@id": "https://gtarafdar.github.io/broken-link-checker/#faq",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "Does Broken Link Checker upload my browsing data?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "No. Scans and history stay in Chrome local storage and IndexedDB on your machine. There is no analytics endpoint and no account."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Why do I see HTTP 429 instead of broken?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Many sites rate-limit aggressive checkers. The extension throttles requests and treats 429 and some 503 responses as rate-limited, not the same as a dead 404. Retry later or lower concurrency in Settings."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Can it crawl my whole site like Screaming Frog?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "No. It is a lightweight on-page and same-origin helper. Domain mode uses a bounded BFS with your max-page setting. It does not replace full SEO crawlers, authenticated lab crawls, or CI link checkers."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Will it find links behind login walls or late SPA routes?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Only what the tab can already see. If you are not authenticated, or a route loads after the scan starts, those URLs may be missed. Re-run after the UI settles."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How do I paste results into Google Sheets?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "In History, expand a scan, use Copy table or Open in Sheets for a blank sheet, then paste with Ctrl or Cmd+V. Nothing is uploaded automatically."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Is Broken Link Checker affiliated with Google?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "No. It is an independent open-source project by Gobinda Tarafdar. Chrome is a trademark of Google LLC. This extension is not affiliated with or endorsed by Google."
+            }
+          }
+        ]
+      },
+      {
+        "@type": "BreadcrumbList",
+        "@id": "https://gtarafdar.github.io/broken-link-checker/#breadcrumb",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Home",
+            "item": "https://gtarafdar.github.io/broken-link-checker/"
+          },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "Install",
+            "item": "https://gtarafdar.github.io/broken-link-checker/#install"
+          },
+          {
+            "@type": "ListItem",
+            "position": 3,
+            "name": "FAQ",
+            "item": "https://gtarafdar.github.io/broken-link-checker/#faq"
+          }
+        ]
+      }
+    ]
+  }
+  </script>
 </head>
 <body>
   <a class="skip" href="#main">Skip to content</a>
